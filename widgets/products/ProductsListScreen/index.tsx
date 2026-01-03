@@ -6,24 +6,20 @@ import {
 } from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
-import {
-  ProductCard,
-  ProductWithFavorite,
-} from "@/widgets/products/ProductCard";
+import { Header } from "@/shared/layout/Header";
+import { ProductWithFavorite } from "@/widgets/products/ProductCard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
-  ScrollView,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FilterChips } from "./components/FilterChips";
+import { ProductsGrid } from "./components/ProductsGrid";
+import { SearchBar } from "./components/SearchBar";
 
 export const ProductsListScreen = () => {
   const params = useLocalSearchParams<{
@@ -32,8 +28,6 @@ export const ProductsListScreen = () => {
     search?: string;
   }>();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const [searchQuery, setSearchQuery] = useState(params.search || "");
   const [showFilters, setShowFilters] = useState(false);
@@ -113,6 +107,30 @@ export const ProductsListScreen = () => {
     ? `Поиск: ${params.search}`
     : "Все товары";
 
+  const handleSortByPrice = () => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: "price",
+      sortOrder:
+        prev.sortBy === "price" && prev.sortOrder === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const handleSortByRating = () => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: "rating",
+      sortOrder: "desc",
+    }));
+  };
+
+  const handleToggleInStock = () => {
+    setFilters((prev) => ({
+      ...prev,
+      inStock: prev.inStock === true ? undefined : true,
+    }));
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -133,155 +151,41 @@ export const ProductsListScreen = () => {
         }
       />
 
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <FontAwesome
-            name="search"
-            size={18}
-            color={Colors.textSecondary}
-            style={styles.searchIcon}
+      <View style={styles.contentWrapper}>
+        <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+
+        {showFilters && (
+          <FilterChips
+            sortBy={filters.sortBy}
+            sortOrder={filters.sortOrder}
+            inStock={filters.inStock}
+            onSortByPrice={handleSortByPrice}
+            onSortByRating={handleSortByRating}
+            onToggleInStock={handleToggleInStock}
           />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Поиск товаров..."
-            placeholderTextColor={Colors.text}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
+        )}
+
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.primary} />
+          </View>
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <ThemedText style={styles.errorText}>
+              Ошибка загрузки товаров
+            </ThemedText>
+          </View>
+        ) : productsWithFavorites.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <ThemedText style={styles.emptyText}>Товары не найдены</ThemedText>
+          </View>
+        ) : (
+          <ProductsGrid
+            products={productsWithFavorites}
+            onFavoritePress={handleFavoritePress}
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <FontAwesome
-                name="times-circle"
-                size={18}
-                color={Colors.textSecondary}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+        )}
       </View>
-
-      {showFilters && (
-        <View style={styles.filtersContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.filtersContent}>
-              <TouchableOpacity
-                style={[
-                  styles.filterChip,
-                  filters.sortBy === "price" && styles.filterChipActive,
-                ]}
-                onPress={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    sortBy: "price",
-                    sortOrder:
-                      prev.sortBy === "price" && prev.sortOrder === "asc"
-                        ? "desc"
-                        : "asc",
-                  }))
-                }
-              >
-                <ThemedText
-                  style={[
-                    styles.filterChipText,
-                    filters.sortBy === "price" && styles.filterChipTextActive,
-                  ]}
-                >
-                  По цене
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.filterChip,
-                  filters.sortBy === "rating" && styles.filterChipActive,
-                ]}
-                onPress={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    sortBy: "rating",
-                    sortOrder: "desc",
-                  }))
-                }
-              >
-                <ThemedText
-                  style={[
-                    styles.filterChipText,
-                    filters.sortBy === "rating" && styles.filterChipTextActive,
-                  ]}
-                >
-                  По рейтингу
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.filterChip,
-                  filters.inStock === true && styles.filterChipActive,
-                ]}
-                onPress={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    inStock: prev.inStock === true ? undefined : true,
-                  }))
-                }
-              >
-                <ThemedText
-                  style={[
-                    styles.filterChipText,
-                    filters.inStock === true && styles.filterChipTextActive,
-                  ]}
-                >
-                  В наличии
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </View>
-      )}
-
-      {isLoading ? (
-        <View
-          style={[
-            styles.loadingContainer,
-            { paddingTop: headerTotalHeight + 100 },
-          ]}
-        >
-          <ActivityIndicator size="large" color={Colors.primary} />
-        </View>
-      ) : error ? (
-        <View
-          style={[
-            styles.errorContainer,
-            { paddingTop: headerTotalHeight + 100 },
-          ]}
-        >
-          <ThemedText style={styles.errorText}>
-            Ошибка загрузки товаров
-          </ThemedText>
-        </View>
-      ) : productsWithFavorites.length === 0 ? (
-        <View
-          style={[
-            styles.emptyContainer,
-            { paddingTop: headerTotalHeight + 100 },
-          ]}
-        >
-          <ThemedText style={styles.emptyText}>Товары не найдены</ThemedText>
-        </View>
-      ) : (
-        <FlatList
-          data={productsWithFavorites}
-          numColumns={2}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ProductCard product={item} onFavoritePress={handleFavoritePress} />
-          )}
-          contentContainerStyle={[
-            styles.listContent,
-            { paddingTop: headerTotalHeight + 80 },
-          ]}
-          columnWrapperStyle={styles.row}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
     </View>
   );
 };
@@ -291,85 +195,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  searchContainer: {
-    position: "absolute",
-    top: HEADER_HEIGHT + 60,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: Colors.background,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.backgroundSecondary,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  searchIcon: {
-    marginRight: 4,
-  },
-  searchInput: {
+  contentWrapper: {
     flex: 1,
-    fontSize: 16,
-    color: Colors.text,
-  },
-  filtersContainer: {
-    position: "absolute",
-    top: HEADER_HEIGHT + 120,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.INPUT_LINE,
-  },
-  filtersContent: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.backgroundSecondary,
-    borderWidth: 1,
-    borderColor: Colors.INPUT_LINE,
-  },
-  filterChipActive: {
-    backgroundColor: Colors.primaryLight + "20",
-    borderColor: Colors.primary,
-  },
-  filterChipText: {
-    fontSize: 14,
-    color: Colors.text,
-  },
-  filterChipTextActive: {
-    color: Colors.primary,
-    fontWeight: "600",
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  row: {
-    justifyContent: "space-between",
+    paddingTop: 20,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 60,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 60,
   },
   errorText: {
     color: Colors.REJECT,
@@ -379,6 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 60,
   },
   emptyText: {
     color: Colors.textSecondary,

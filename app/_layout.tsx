@@ -28,6 +28,7 @@ function LayoutContent() {
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="product" options={{ headerShown: false }} />
       <Stack.Screen name="products" options={{ headerShown: false }} />
+      <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

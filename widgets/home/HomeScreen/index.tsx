@@ -5,7 +5,9 @@ import {
   useRemoveFromFavoritesMutation,
 } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Header } from "@/shared/layout/Header";
 import {
   ProductCard,
   ProductWithFavorite,
@@ -22,11 +24,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { PromoBanner } from "../PromoBanner";
 
 export const HomeScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
 
   // Получаем популярные товары
@@ -88,35 +90,34 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={["top"]} style={styles.safeArea}>
-        <View style={styles.searchHeader}>
-          <View style={styles.searchContainer}>
-            <FontAwesome
-              name="search"
-              size={18}
-              color={Colors.textSecondary}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Поиск товаров..."
-              placeholderTextColor={Colors.text}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              onSubmitEditing={handleSearchPress}
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <FontAwesome
-                  name="times-circle"
-                  size={18}
-                  color={Colors.textSecondary}
-                />
-              </TouchableOpacity>
-            )}
-          </View>
+      <Header title={t("home.title")} />
+      <View style={styles.searchHeader}>
+        <View style={styles.searchContainer}>
+          <FontAwesome
+            name="search"
+            size={18}
+            color={Colors.textSecondary}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder={t("home.searchPlaceholder")}
+            placeholderTextColor={Colors.text}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearchPress}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <FontAwesome
+                name="times-circle"
+                size={18}
+                color={Colors.textSecondary}
+              />
+            </TouchableOpacity>
+          )}
         </View>
-      </SafeAreaView>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -132,26 +133,28 @@ export const HomeScreen = () => {
           />
         </View>
         <View style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>Популярные товары</ThemedText>
+          <ThemedText style={styles.sectionTitle}>
+            {t("home.popularProducts")}
+          </ThemedText>
         </View>
-        <View style={styles.productsContainer}>
-          {isLoadingProducts ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={Colors.primary} />
-            </View>
-          ) : productsError ? (
-            <View style={styles.errorContainer}>
-              <ThemedText style={styles.errorText}>
-                Ошибка загрузки товаров
-              </ThemedText>
-            </View>
-          ) : productsWithFavorites.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>
-                Товары не найдены
-              </ThemedText>
-            </View>
-          ) : (
+        {isLoadingProducts ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.primary} />
+          </View>
+        ) : productsError ? (
+          <View style={styles.errorContainer}>
+            <ThemedText style={styles.errorText}>
+              {t("home.errorLoading")}
+            </ThemedText>
+          </View>
+        ) : productsWithFavorites.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <ThemedText style={styles.emptyText}>
+              {t("home.noProducts")}
+            </ThemedText>
+          </View>
+        ) : (
+          <View style={styles.productsContainer}>
             <FlatList
               data={productsWithFavorites}
               numColumns={2}
@@ -166,8 +169,8 @@ export const HomeScreen = () => {
               columnWrapperStyle={styles.row}
               scrollEnabled={false}
             />
-          )}
-        </View>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -178,12 +181,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  safeArea: {
-    backgroundColor: Colors.background,
-  },
   searchHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
+    paddingTop: 90,
     backgroundColor: Colors.background,
   },
   searchContainer: {

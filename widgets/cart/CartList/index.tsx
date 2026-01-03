@@ -4,19 +4,18 @@ import {
   useUpdateCartItemMutation,
 } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
+import { Header } from "@/shared/layout/Header";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CartItemCard } from "../CartItem";
 
 export const CartList = () => {
+  const { t } = useTranslation();
   const { data: cartData, isLoading, error } = useGetCartQuery();
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeCartItem] = useRemoveCartItemMutation();
-  const insets = useSafeAreaInsets();
-  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const handleRemove = async (id: string) => {
     try {
@@ -43,7 +42,7 @@ export const CartList = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Корзина" />
+      <Header title={t("cart.title")} />
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
@@ -52,14 +51,14 @@ export const CartList = () => {
       ) : error ? (
         <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
-            Ошибка загрузки корзины
+            {t("cart.errorLoading")}
           </ThemedText>
         </View>
       ) : items.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>Корзина пуста</ThemedText>
+          <ThemedText style={styles.emptyText}>{t("cart.empty")}</ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            Добавьте товары из каталога
+            {t("cart.emptySubtext")}
           </ThemedText>
         </View>
       ) : (
@@ -74,20 +73,19 @@ export const CartList = () => {
                 onQuantityChange={handleQuantityChange}
               />
             )}
-            contentContainerStyle={[
-              styles.listContent,
-              { paddingTop: headerTotalHeight + 16 },
-            ]}
+            contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
 
           <View style={styles.footer}>
             <View style={styles.totalContainer}>
-              <ThemedText style={styles.totalLabel}>Итого:</ThemedText>
+              <ThemedText style={styles.totalLabel}>
+                {t("cart.total")}:
+              </ThemedText>
               <ThemedText style={styles.totalPrice}>{total} ₽</ThemedText>
             </View>
             <Button
-              title="Оформить заказ"
+              title={t("cart.checkout")}
               onPress={handleCheckout}
               style={styles.checkoutButton}
             />
@@ -105,6 +103,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
+    paddingTop: 80,
     paddingBottom: 100,
   },
   emptyContainer: {

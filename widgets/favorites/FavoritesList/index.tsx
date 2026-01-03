@@ -1,15 +1,16 @@
 import { useGetFavoritesQuery, useRemoveFromFavoritesMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
+import { Header } from "@/shared/layout/Header";
 import {
   ProductCard,
   ProductWithFavorite,
 } from "@/widgets/products/ProductCard";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const FavoritesList = () => {
+  const { t } = useTranslation();
   const {
     data: favoritesData,
     isLoading,
@@ -19,8 +20,6 @@ export const FavoritesList = () => {
     offset: 0,
   });
   const [removeFromFavorites] = useRemoveFromFavoritesMutation();
-  const insets = useSafeAreaInsets();
-  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const handleFavoritePress = async (productId: string) => {
     try {
@@ -38,40 +37,25 @@ export const FavoritesList = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Избранное" />
+      <Header title={t("favorites.title")} />
 
       {isLoading ? (
-        <View
-          style={[
-            styles.loadingContainer,
-            { paddingTop: headerTotalHeight + 16 },
-          ]}
-        >
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
       ) : error ? (
-        <View
-          style={[
-            styles.emptyContainer,
-            { paddingTop: headerTotalHeight + 16 },
-          ]}
-        >
+        <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
-            Ошибка загрузки избранного
+            {t("favorites.errorLoading")}
           </ThemedText>
         </View>
       ) : favorites.length === 0 ? (
-        <View
-          style={[
-            styles.emptyContainer,
-            { paddingTop: headerTotalHeight + 16 },
-          ]}
-        >
+        <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
-            Нет избранных товаров
+            {t("favorites.empty")}
           </ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            Добавьте товары в избранное, нажав на иконку сердца
+            {t("favorites.emptySubtext")}
           </ThemedText>
         </View>
       ) : (
@@ -82,10 +66,7 @@ export const FavoritesList = () => {
           renderItem={({ item }) => (
             <ProductCard product={item} onFavoritePress={handleFavoritePress} />
           )}
-          contentContainerStyle={[
-            styles.listContent,
-            { paddingTop: headerTotalHeight + 16 },
-          ]}
+          contentContainerStyle={styles.listContent}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
         />
@@ -101,10 +82,17 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
+    paddingTop: 90,
     paddingBottom: 16,
   },
   row: {
     justifyContent: "space-between",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
   },
   emptyContainer: {
     flex: 1,
@@ -124,11 +112,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.textSecondary,
     textAlign: "center",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
   },
 });

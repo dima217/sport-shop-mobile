@@ -1,10 +1,7 @@
-import {
-  useGetOrdersQuery,
-  useSignOutMutation,
-} from "@/api";
+import { useGetOrdersQuery, useSignOutMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
-import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Header } from "@/shared/layout/Header";
 import { clearAuth } from "@/store/slices/authSlice";
 import { RootState } from "@/store/store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -17,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 
 interface ProfileOption {
@@ -32,12 +28,10 @@ interface ProfileOption {
 export const ProfileScreen = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const profile = useSelector((state: RootState) => state.auth.user);
   const [signOut] = useSignOutMutation();
-  const { data: orders, isLoading: isLoadingOrders } = useGetOrdersQuery();
+  const { data: orders } = useGetOrdersQuery();
 
   const handleSignOut = async () => {
     try {
@@ -45,7 +39,6 @@ export const ProfileScreen = () => {
       dispatch(clearAuth());
     } catch (error) {
       console.error("Error signing out:", error);
-      // В любом случае очищаем локальное состояние
       dispatch(clearAuth());
     }
   };
@@ -56,8 +49,7 @@ export const ProfileScreen = () => {
       title: "Мои заказы",
       icon: "shopping-bag",
       onPress: () => {
-        // TODO: Navigate to orders screen
-        console.log("Navigate to orders");
+        router.push("/profile/orders");
       },
       showBadge: orders && orders.length > 0,
       badgeCount: orders?.length,
@@ -75,8 +67,7 @@ export const ProfileScreen = () => {
       title: "Адреса доставки",
       icon: "map-marker",
       onPress: () => {
-        // TODO: Navigate to addresses screen
-        console.log("Navigate to addresses");
+        router.push("/profile/addresses");
       },
     },
     {
@@ -84,8 +75,7 @@ export const ProfileScreen = () => {
       title: "Настройки",
       icon: "cog",
       onPress: () => {
-        // TODO: Navigate to settings screen
-        console.log("Navigate to settings");
+        router.push("/profile/settings");
       },
     },
     {
@@ -102,8 +92,7 @@ export const ProfileScreen = () => {
       title: "О приложении",
       icon: "info-circle",
       onPress: () => {
-        // TODO: Navigate to about screen
-        console.log("Navigate to about");
+        router.push("/profile/about");
       },
     },
   ];
@@ -116,7 +105,11 @@ export const ProfileScreen = () => {
     >
       <View style={styles.optionLeft}>
         <View style={styles.iconContainer}>
-          <FontAwesome name={item.icon as any} size={20} color={Colors.primary} />
+          <FontAwesome
+            name={item.icon as any}
+            size={20}
+            color={Colors.primary}
+          />
         </View>
         <ThemedText style={styles.optionTitle}>{item.title}</ThemedText>
       </View>
@@ -140,7 +133,7 @@ export const ProfileScreen = () => {
       <Header title="Профиль" />
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={{ paddingTop: headerTotalHeight }}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header */}
@@ -168,14 +161,15 @@ export const ProfileScreen = () => {
                 : profile?.email || "Пользователь"}
             </ThemedText>
             {profile?.email && (
-              <ThemedText style={styles.profileEmail}>{profile.email}</ThemedText>
+              <ThemedText style={styles.profileEmail}>
+                {profile.email}
+              </ThemedText>
             )}
           </View>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => {
-              // TODO: Navigate to edit profile
-              console.log("Edit profile");
+              router.push("/profile/edit");
             }}
           >
             <FontAwesome name="pencil" size={18} color={Colors.primary} />
@@ -216,6 +210,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 80,
   },
   profileHeader: {
     flexDirection: "row",
@@ -332,4 +329,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

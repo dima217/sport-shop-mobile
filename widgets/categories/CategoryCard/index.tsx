@@ -1,5 +1,6 @@
 import type { Category } from "@/api/types/categories";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -12,6 +13,7 @@ interface CategoryCardProps {
 
 export const CategoryCard = ({ category }: CategoryCardProps) => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handlePress = () => {
     router.push({
@@ -33,7 +35,7 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
         <ThemedText style={styles.name}>{category.name}</ThemedText>
         {category.productCount !== undefined && (
           <ThemedText style={styles.count}>
-            {category.productCount} товаров
+            {category.productCount} {t("categories.productsCount")}
           </ThemedText>
         )}
       </View>
