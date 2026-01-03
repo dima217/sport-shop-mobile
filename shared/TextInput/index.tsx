@@ -8,6 +8,7 @@ import type {
   ViewStyle,
 } from "react-native";
 
+import { Colors } from "@/constants/design-tokens";
 import styles from "./styles";
 
 export interface TextInputProps extends Omit<RNTextInputProps, "style"> {
@@ -48,6 +49,7 @@ const TextInput = ({
           style={[styles.textInput, inputStyle]}
           editable={editable}
           enablesReturnKeyAutomatically
+          placeholderTextColor={Colors.text}
           {...rest}
         />
         {right && <View style={styles.rightContainer}>{right}</View>}

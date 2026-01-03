@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILIES.MONTSERRAT_SEMIBOLD,
     fontSize: FONT_SIZES.MEDIUM,
     padding: 0,
+    color: Colors.text,
   },
   errorContainer: {
     paddingHorizontal: 8,

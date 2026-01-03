@@ -8,7 +8,7 @@ import {
 import { FetchArgsWithAuth } from "./types/base";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://84.201.188.209:3000",
+  baseUrl: "http://192.168.79.195:3000",
   credentials: "include",
   prepareHeaders: async (headers, { getState }) => {
     const token = await secureStore.getAccessToken();
@@ -30,7 +30,6 @@ export const baseQueryWithAuth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
 
-  // Если получили 401, очищаем авторизацию
   if (result.error && result.error.status === 401) {
     api.dispatch(clearAuth());
     await secureStore.setAccessToken(null);

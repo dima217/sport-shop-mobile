@@ -1,11 +1,13 @@
 import { Colors } from "@/constants/design-tokens";
+import AuthChecker from "@/services/auth/AuthChecker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
+import React from "react";
 
 export default function TabLayout() {
   return (
     <>
-      {/*<AuthChecker />*/}
+      <AuthChecker />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.primary,

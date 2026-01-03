@@ -16,7 +16,7 @@ const Login = () => {
       </View>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
-          <ThemedText>Login</ThemedText>
+          <ThemedText type="title">Login</ThemedText>
         </View>
         <LoginForm />
       </View>
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   backgroundIcon: {},
   container: {
     flex: 1,
+    gap: 40,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,

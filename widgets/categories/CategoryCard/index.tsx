@@ -14,8 +14,13 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
   const router = useRouter();
 
   const handlePress = () => {
-    // router.push(`/(tabs)/categories/${category.id}`);
-    console.log("Navigate to category", category.id);
+    router.push({
+      pathname: "/products" as any,
+      params: {
+        ...(category.id && { categoryId: category.id }),
+        ...(category.slug && { categorySlug: category.slug }),
+      },
+    });
   };
 
   return (

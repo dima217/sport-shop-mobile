@@ -46,8 +46,11 @@ const LoginForm = () => {
       dispatch(
         setCredentials({
           user: {
-            ...userData,
-            ...result.user.profile,
+            id: result.user.profile.id,
+            email: userData.email,
+            firstName: result.user.profile.firstName,
+            lastName: result.user.profile.lastName,
+            avatarUrl: result.user.profile.avatarUrl,
           },
           accessToken: result.accessToken,
         })

@@ -11,6 +11,7 @@ import {
   ProductWithFavorite,
 } from "@/widgets/products/ProductCard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -25,6 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PromoBanner } from "../PromoBanner";
 
 export const HomeScreen = () => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
   // Получаем популярные товары
@@ -65,7 +67,6 @@ export const HomeScreen = () => {
     }
   };
 
-  // Преобразуем продукты с флагом избранного
   const productsWithFavorites: ProductWithFavorite[] = useMemo(() => {
     if (!productsData?.products) return [];
     return productsData.products.map((product) => ({
@@ -75,39 +76,47 @@ export const HomeScreen = () => {
   }, [productsData, favoritesSet]);
 
   const handleSearchPress = () => {
-    // Navigate to search screen
-    console.log("Search:", searchQuery);
+    if (searchQuery.trim()) {
+      router.push({
+        pathname: "/products" as any,
+        params: {
+          search: searchQuery.trim(),
+        },
+      });
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <FontAwesome
-            name="search"
-            size={18}
-            color={Colors.textSecondary}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Поиск товаров..."
-            placeholderTextColor={Colors.textSecondary}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={handleSearchPress}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <FontAwesome
-                name="times-circle"
-                size={18}
-                color={Colors.textSecondary}
-              />
-            </TouchableOpacity>
-          )}
+    <View style={styles.container}>
+      <SafeAreaView edges={["top"]} style={styles.safeArea}>
+        <View style={styles.searchHeader}>
+          <View style={styles.searchContainer}>
+            <FontAwesome
+              name="search"
+              size={18}
+              color={Colors.textSecondary}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Поиск товаров..."
+              placeholderTextColor={Colors.text}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onSubmitEditing={handleSearchPress}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <FontAwesome
+                  name="times-circle"
+                  size={18}
+                  color={Colors.textSecondary}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
 
       <ScrollView
         style={styles.scrollView}
@@ -160,7 +169,7 @@ export const HomeScreen = () => {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -169,10 +178,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  header: {
+  safeArea: {
+    backgroundColor: Colors.background,
+  },
+  searchHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: 8,
+    paddingVertical: 16,
+    backgroundColor: Colors.background,
   },
   searchContainer: {
     flexDirection: "row",

@@ -8,6 +8,7 @@ import {
 import { Colors } from "@/constants/design-tokens";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
@@ -19,7 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ProductDetailsProps {
   productId: string;
@@ -39,6 +40,8 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
   const [addToFavorites] = useAddToFavoritesMutation();
   const [removeFromFavorites] = useRemoveFromFavoritesMutation();
   const [addToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
+  const insets = useSafeAreaInsets();
+  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const isFavorite = useMemo(() => {
     return favoritesData?.products.some((p) => p.id === productId) || false;
@@ -57,15 +60,37 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
   };
 
   const handleAddToCart = async () => {
-    if (!product || !selectedSize) {
+    if (!product) {
       return;
     }
+
+    // Если размеров нет или только один размер - автоматически выбираем его
+    let finalSize = selectedSize;
+    if (!finalSize && product.sizes && product.sizes.length > 0) {
+      if (product.sizes.length === 1) {
+        finalSize = product.sizes[0];
+      }
+    }
+
+    // Если цветов нет или только один цвет - автоматически выбираем его
+    let finalColor = selectedColor;
+    if (!finalColor && product.colors && product.colors.length > 0) {
+      if (product.colors.length === 1) {
+        finalColor = product.colors[0];
+      }
+    }
+
+    // Если размеров больше одного и не выбран - не добавляем
+    if (product.sizes && product.sizes.length > 1 && !finalSize) {
+      return;
+    }
+
     try {
       await addToCart({
         productId: product.id,
         quantity: 1,
-        size: selectedSize,
-        color: selectedColor || null,
+        size: finalSize || null,
+        color: finalColor || null,
       }).unwrap();
       // Можно показать уведомление об успешном добавлении
     } catch (error) {
@@ -79,18 +104,41 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <View style={styles.loadingContainer}>
+      <View style={styles.container}>
+        <Header
+          title=""
+          left={
+            <TouchableOpacity onPress={() => router.back()}>
+              <FontAwesome name="arrow-left" size={24} color={Colors.text} />
+            </TouchableOpacity>
+          }
+        />
+        <View
+          style={[styles.loadingContainer, { paddingTop: headerTotalHeight }]}
+        >
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (error || !product) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <View style={styles.errorContainer}>
+      <View style={styles.container}>
+        <Header
+          title=""
+          left={
+            <TouchableOpacity onPress={() => router.back()}>
+              <FontAwesome name="arrow-left" size={24} color={Colors.text} />
+            </TouchableOpacity>
+          }
+        />
+        <View
+          style={[
+            styles.errorContainer,
+            { paddingTop: headerTotalHeight + 16 },
+          ]}
+        >
           <ThemedText style={styles.errorText}>
             Ошибка загрузки товара
           </ThemedText>
@@ -98,35 +146,34 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
             <ThemedText style={styles.backLink}>Вернуться назад</ThemedText>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
+    <View style={styles.container}>
+      <Header
+        title=""
+        left={
+          <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.favoriteButton}
-            onPress={handleFavoritePress}
-          >
+        }
+        right={
+          <TouchableOpacity onPress={handleFavoritePress}>
             <FontAwesome
               name={isFavorite ? "heart" : "heart-o"}
               size={24}
               color={isFavorite ? Colors.primary : Colors.text}
             />
           </TouchableOpacity>
-        </View>
-
+        }
+      />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingTop: headerTotalHeight }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -252,12 +299,16 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
         <Button
           title={product.inStock ? "В корзину" : "Нет в наличии"}
           onPress={handleAddToCart}
-          disabled={!product.inStock || !selectedSize || isAddingToCart}
+          disabled={
+            Boolean(!product.inStock) ||
+            Boolean(isAddingToCart) ||
+            Boolean(product.sizes && product.sizes.length > 1 && !selectedSize)
+          }
           loading={isAddingToCart}
           style={styles.addToCartButton}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -268,19 +319,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backButton: {
-    padding: 8,
-  },
-  favoriteButton: {
-    padding: 8,
   },
   imageContainer: {
     width: "100%",

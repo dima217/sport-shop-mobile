@@ -6,14 +6,17 @@ import {
 import { Colors } from "@/constants/design-tokens";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CartItemCard } from "../CartItem";
 
 export const CartList = () => {
   const { data: cartData, isLoading, error } = useGetCartQuery();
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeCartItem] = useRemoveCartItemMutation();
+  const insets = useSafeAreaInsets();
+  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   const handleRemove = async (id: string) => {
     try {
@@ -39,10 +42,8 @@ export const CartList = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Корзина</ThemedText>
-      </View>
+    <View style={styles.container}>
+      <Header title="Корзина" />
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
@@ -73,7 +74,10 @@ export const CartList = () => {
                 onQuantityChange={handleQuantityChange}
               />
             )}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={[
+              styles.listContent,
+              { paddingTop: headerTotalHeight + 16 },
+            ]}
             showsVerticalScrollIndicator={false}
           />
 
@@ -90,7 +94,7 @@ export const CartList = () => {
           </View>
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -98,16 +102,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: Colors.text,
   },
   listContent: {
     paddingHorizontal: 16,

@@ -1,7 +1,9 @@
 import { useGetCategoriesQuery } from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryCard } from "../CategoryCard";
 
 export const CategoriesList = () => {
@@ -13,14 +15,19 @@ export const CategoriesList = () => {
     limit: 50,
     offset: 0,
   });
+  const insets = useSafeAreaInsets();
+  const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ThemedText style={styles.title}>Категории</ThemedText>
-        </View>
-        <View style={styles.loadingContainer}>
+        <Header title="Категории" />
+        <View
+          style={[
+            styles.loadingContainer,
+            { paddingTop: headerTotalHeight + 16 },
+          ]}
+        >
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
       </View>
@@ -30,10 +37,13 @@ export const CategoriesList = () => {
   if (error) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ThemedText style={styles.title}>Категории</ThemedText>
-        </View>
-        <View style={styles.errorContainer}>
+        <Header title="Категории" />
+        <View
+          style={[
+            styles.errorContainer,
+            { paddingTop: headerTotalHeight + 16 },
+          ]}
+        >
           <ThemedText style={styles.errorText}>
             Ошибка загрузки категорий
           </ThemedText>
@@ -44,16 +54,17 @@ export const CategoriesList = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Категории</ThemedText>
-      </View>
+      <Header title="Категории" />
       {categories && categories.length > 0 ? (
         <FlatList
           data={categories}
           numColumns={2}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <CategoryCard category={item} />}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingTop: headerTotalHeight + 16 },
+          ]}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
         />
@@ -69,16 +80,6 @@ export const CategoriesList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: Colors.text,
   },
   listContent: {
     paddingHorizontal: 16,

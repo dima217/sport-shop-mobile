@@ -15,7 +15,7 @@ const SignUp = () => {
       </View>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
-          <ThemedText>Sign Up</ThemedText>
+          <ThemedText type="title">Sign Up</ThemedText>
         </View>
         <SignUpForm />
       </View>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   backgroundIcon: {},
   container: {
     flex: 1,
-    paddingTop: 20,
+    gap: 40,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,

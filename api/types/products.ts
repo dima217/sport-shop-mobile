@@ -31,11 +31,16 @@ export interface ProductsResponse {
 
 export interface ProductsQueryParams {
   categoryId?: string;
+  categorySlug?: string;
   search?: string;
   minPrice?: number;
   maxPrice?: number;
+  brands?: string[];
+  sizes?: string[];
+  colors?: string[];
+  minRating?: number;
   inStock?: boolean;
-  sortBy?: "price" | "rating" | "name" | "createdAt";
+  sortBy?: "price" | "rating" | "name" | "createdAt" | "reviewCount";
   sortOrder?: "asc" | "desc";
   limit?: number;
   offset?: number;
