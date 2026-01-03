@@ -1,16 +1,13 @@
+import type { CartItem as CartItemType } from "@/api/types/cart";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export interface CartItem {
-  id: string;
-  productId: string;
-  name: string;
-  price: number;
-  image: string;
-  size?: string;
-  quantity: number;
+// Расширяем CartItem для UI нужд (обратная совместимость с mock данными)
+export interface CartItem extends CartItemType {
+  name?: string;
+  image?: string;
 }
 
 interface CartItemProps {
@@ -38,10 +35,18 @@ export const CartItemCard = ({
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image
+        source={{
+          uri:
+            item.image ||
+            item.product?.images?.[0] ||
+            "https://via.placeholder.com/300",
+        }}
+        style={styles.image}
+      />
       <View style={styles.infoContainer}>
         <ThemedText style={styles.name} numberOfLines={2}>
-          {item.name}
+          {item.name || item.product?.name || "Товар"}
         </ThemedText>
         {item.size && (
           <ThemedText style={styles.size}>Размер: {item.size}</ThemedText>
@@ -141,4 +146,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-

@@ -1,14 +1,10 @@
+import type { Category } from "@/api/types/categories";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export interface Category {
-  id: string;
-  name: string;
-  image: string;
-  productCount?: number;
-}
+export type { Category };
 
 interface CategoryCardProps {
   category: Category;

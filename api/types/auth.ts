@@ -5,7 +5,6 @@ export interface SignInRequest {
 
 export interface SignInResponse {
   accessToken: string;
-  refreshToken: string;
   user: {
     profile: {
       id: string;
@@ -33,7 +32,6 @@ export interface SignUpConfirmRequest {
 
 export interface SignUpConfirmResponse {
   accessToken: string;
-  refreshToken: string;
 }
 
 export interface MeResponse {
@@ -41,9 +39,4 @@ export interface MeResponse {
   email: string;
   name: string;
   avatar?: string | null;
-}
-
-export interface RefreshTokenResponse {
-  accessToken: string;
-  refreshToken: string;
 }

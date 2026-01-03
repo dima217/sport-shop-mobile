@@ -1,10 +1,18 @@
+import {
+  useAddToCartMutation,
+  useAddToFavoritesMutation,
+  useGetFavoritesQuery,
+  useGetProductQuery,
+  useRemoveFromFavoritesMutation,
+} from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -17,48 +25,82 @@ interface ProductDetailsProps {
   productId: string;
 }
 
-// Mock data - в реальном приложении будет загрузка из API
-const mockProduct = {
-  id: "1",
-  name: "Беговые кроссовки Nike Air Max",
-  price: 8990,
-  oldPrice: 12990,
-  images: [
-    "https://via.placeholder.com/400",
-    "https://via.placeholder.com/400",
-    "https://via.placeholder.com/400",
-  ],
-  description:
-    "Современные беговые кроссовки с технологией Air Max для максимального комфорта во время тренировок. Легкие и дышащие материалы обеспечивают отличную вентиляцию.",
-  category: "Обувь",
-  rating: 4.5,
-  reviews: 128,
-  inStock: true,
-  sizes: ["40", "41", "42", "43", "44", "45"],
-  colors: ["Черный", "Белый", "Серый"],
-};
-
 export const ProductDetails = ({ productId }: ProductDetailsProps) => {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
-  const handleAddToCart = () => {
-    if (!selectedSize) {
-      // Показать ошибку
-      return;
+  const { data: product, isLoading, error } = useGetProductQuery(productId);
+  const { data: favoritesData } = useGetFavoritesQuery({
+    limit: 100,
+    offset: 0,
+  });
+  const [addToFavorites] = useAddToFavoritesMutation();
+  const [removeFromFavorites] = useRemoveFromFavoritesMutation();
+  const [addToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
+
+  const isFavorite = useMemo(() => {
+    return favoritesData?.products.some((p) => p.id === productId) || false;
+  }, [favoritesData, productId]);
+
+  const handleFavoritePress = async () => {
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(productId).unwrap();
+      } else {
+        await addToFavorites(productId).unwrap();
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
     }
-    // Добавить в корзину
-    console.log("Add to cart", productId, selectedSize);
   };
 
-  const discount = mockProduct.oldPrice
-    ? Math.round(
-        ((mockProduct.oldPrice - mockProduct.price) / mockProduct.oldPrice) *
-          100
-      )
+  const handleAddToCart = async () => {
+    if (!product || !selectedSize) {
+      return;
+    }
+    try {
+      await addToCart({
+        productId: product.id,
+        quantity: 1,
+        size: selectedSize,
+        color: selectedColor || null,
+      }).unwrap();
+      // Можно показать уведомление об успешном добавлении
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+
+  const discount = product?.oldPrice
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <View style={styles.errorContainer}>
+          <ThemedText style={styles.errorText}>
+            Ошибка загрузки товара
+          </ThemedText>
+          <TouchableOpacity onPress={() => router.back()}>
+            <ThemedText style={styles.backLink}>Вернуться назад</ThemedText>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -75,7 +117,7 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.favoriteButton}
-            onPress={() => setIsFavorite(!isFavorite)}
+            onPress={handleFavoritePress}
           >
             <FontAwesome
               name={isFavorite ? "heart" : "heart-o"}
@@ -87,83 +129,120 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
 
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: mockProduct.images[selectedImage] }}
+            source={{
+              uri: product.images[selectedImage] || product.images[0] || "",
+            }}
             style={styles.mainImage}
           />
-          {mockProduct.oldPrice && discount > 0 && (
+          {product.oldPrice && discount > 0 && (
             <View style={styles.discountBadge}>
               <ThemedText style={styles.discountText}>-{discount}%</ThemedText>
             </View>
           )}
         </View>
 
-        <View style={styles.thumbnailContainer}>
-          {mockProduct.images.map((image, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedImage(index)}
-              style={[
-                styles.thumbnail,
-                selectedImage === index && styles.thumbnailSelected,
-              ]}
-            >
-              <Image source={{ uri: image }} style={styles.thumbnailImage} />
-            </TouchableOpacity>
-          ))}
-        </View>
+        {product.images.length > 1 && (
+          <View style={styles.thumbnailContainer}>
+            {product.images.map((image, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setSelectedImage(index)}
+                style={[
+                  styles.thumbnail,
+                  selectedImage === index && styles.thumbnailSelected,
+                ]}
+              >
+                <Image source={{ uri: image }} style={styles.thumbnailImage} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
         <View style={styles.content}>
           <ThemedText style={styles.category}>
-            {mockProduct.category}
+            {product.category?.name || ""}
           </ThemedText>
-          <ThemedText style={styles.name}>{mockProduct.name}</ThemedText>
+          <ThemedText style={styles.name}>{product.name}</ThemedText>
 
-          <View style={styles.ratingContainer}>
-            <FontAwesome name="star" size={16} color="#FFD700" />
-            <ThemedText style={styles.rating}>{mockProduct.rating}</ThemedText>
-            <ThemedText style={styles.reviews}>
-              ({mockProduct.reviews} отзывов)
-            </ThemedText>
-          </View>
+          {product.rating && (
+            <View style={styles.ratingContainer}>
+              <FontAwesome name="star" size={16} color="#FFD700" />
+              <ThemedText style={styles.rating}>{product.rating}</ThemedText>
+              {product.reviewCount !== undefined && (
+                <ThemedText style={styles.reviews}>
+                  ({product.reviewCount} отзывов)
+                </ThemedText>
+              )}
+            </View>
+          )}
 
           <View style={styles.priceContainer}>
-            <ThemedText style={styles.price}>{mockProduct.price} ₽</ThemedText>
-            {mockProduct.oldPrice && (
+            <ThemedText style={styles.price}>{product.price} ₽</ThemedText>
+            {product.oldPrice && (
               <ThemedText style={styles.oldPrice}>
-                {mockProduct.oldPrice} ₽
+                {product.oldPrice} ₽
               </ThemedText>
             )}
           </View>
 
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Размер</ThemedText>
-            <View style={styles.sizesContainer}>
-              {mockProduct.sizes.map((size) => (
-                <TouchableOpacity
-                  key={size}
-                  style={[
-                    styles.sizeButton,
-                    selectedSize === size && styles.sizeButtonSelected,
-                  ]}
-                  onPress={() => setSelectedSize(size)}
-                >
-                  <ThemedText
+          {product.sizes && product.sizes.length > 0 && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Размер</ThemedText>
+              <View style={styles.sizesContainer}>
+                {product.sizes.map((size) => (
+                  <TouchableOpacity
+                    key={size}
                     style={[
-                      styles.sizeText,
-                      selectedSize === size && styles.sizeTextSelected,
+                      styles.sizeButton,
+                      selectedSize === size && styles.sizeButtonSelected,
                     ]}
+                    onPress={() => setSelectedSize(size)}
                   >
-                    {size}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
+                    <ThemedText
+                      style={[
+                        styles.sizeText,
+                        selectedSize === size && styles.sizeTextSelected,
+                      ]}
+                    >
+                      {size}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
+          )}
+
+          {product.colors && product.colors.length > 0 && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Цвет</ThemedText>
+              <View style={styles.sizesContainer}>
+                {product.colors.map((color) => (
+                  <TouchableOpacity
+                    key={color}
+                    style={[
+                      styles.sizeButton,
+                      selectedColor === color && styles.sizeButtonSelected,
+                    ]}
+                    onPress={() => setSelectedColor(color)}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.sizeText,
+                        selectedColor === color && styles.sizeTextSelected,
+                      ]}
+                    >
+                      {color}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
 
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Описание</ThemedText>
             <ThemedText style={styles.description}>
-              {mockProduct.description}
+              {product.description}
             </ThemedText>
           </View>
         </View>
@@ -171,9 +250,10 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
 
       <View style={styles.footer}>
         <Button
-          title={mockProduct.inStock ? "В корзину" : "Нет в наличии"}
+          title={product.inStock ? "В корзину" : "Нет в наличии"}
           onPress={handleAddToCart}
-          disabled={!mockProduct.inStock || !selectedSize}
+          disabled={!product.inStock || !selectedSize || isAddingToCart}
+          loading={isAddingToCart}
           style={styles.addToCartButton}
         />
       </View>
@@ -346,5 +426,27 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     width: "100%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 32,
+  },
+  errorText: {
+    color: Colors.REJECT,
+    fontSize: 18,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  backLink: {
+    color: Colors.primary,
+    fontSize: 16,
+    textDecorationLine: "underline",
   },
 });

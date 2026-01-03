@@ -1,4 +1,6 @@
 import { useSignInMutation } from "@/api";
+import { secureStore } from "@/services/secureStore";
+import { setCredentials } from "@/store/slices/authSlice";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -31,20 +33,14 @@ const LoginForm = () => {
   const onSubmit = async (userData: LoginData) => {
     setApiError(null);
 
-    /*try {
+    try {
       const result = await signIn({
         email: userData.email,
         password: userData.password,
       }).unwrap();
 
-      console.log(`accessToken: ${result.accessToken}`);
       if (result.accessToken) {
         await secureStore.setAccessToken(result.accessToken);
-      }
-
-      console.log(`refresh: ${result.refreshToken}`);
-      if (result.refreshToken) {
-        await secureStore.setRefreshToken(result.refreshToken);
       }
 
       dispatch(
@@ -67,8 +63,7 @@ const LoginForm = () => {
         errorMessage = error.error;
       }
       setApiError(errorMessage);
-    } */
-    router.replace("/(tabs)/home");
+    }
   };
 
   return (

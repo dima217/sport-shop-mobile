@@ -1,38 +1,37 @@
+import { useGetFavoritesQuery, useRemoveFromFavoritesMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Product, ProductCard } from "@/widgets/products/ProductCard";
-import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import {
+  ProductCard,
+  ProductWithFavorite,
+} from "@/widgets/products/ProductCard";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Mock data
-const mockFavorites: Product[] = [
-  {
-    id: "2",
-    name: "Спортивный костюм Adidas",
-    price: 5990,
-    image: "https://via.placeholder.com/300",
-    category: "Одежда",
-    rating: 4.8,
-    isFavorite: true,
-  },
-  {
-    id: "5",
-    name: "Спортивная сумка",
-    price: 3490,
-    image: "https://via.placeholder.com/300",
-    category: "Аксессуары",
-    rating: 4.3,
-    isFavorite: true,
-  },
-];
-
 export const FavoritesList = () => {
-  const [favorites, setFavorites] = useState<Product[]>(mockFavorites);
+  const {
+    data: favoritesData,
+    isLoading,
+    error,
+  } = useGetFavoritesQuery({
+    limit: 50,
+    offset: 0,
+  });
+  const [removeFromFavorites] = useRemoveFromFavoritesMutation();
 
-  const handleFavoritePress = (productId: string) => {
-    setFavorites((prev) => prev.filter((item) => item.id !== productId));
+  const handleFavoritePress = async (productId: string) => {
+    try {
+      await removeFromFavorites(productId).unwrap();
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+    }
   };
+
+  const favorites: ProductWithFavorite[] =
+    favoritesData?.products.map((product) => ({
+      ...product,
+      isFavorite: true,
+    })) || [];
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -40,9 +39,21 @@ export const FavoritesList = () => {
         <ThemedText style={styles.title}>Избранное</ThemedText>
       </View>
 
-      {favorites.length === 0 ? (
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      ) : error ? (
         <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>Нет избранных товаров</ThemedText>
+          <ThemedText style={styles.emptyText}>
+            Ошибка загрузки избранного
+          </ThemedText>
+        </View>
+      ) : favorites.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <ThemedText style={styles.emptyText}>
+            Нет избранных товаров
+          </ThemedText>
           <ThemedText style={styles.emptySubtext}>
             Добавьте товары в избранное, нажав на иконку сердца
           </ThemedText>
@@ -105,5 +116,10 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: "center",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
 });
-

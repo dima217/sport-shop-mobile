@@ -1,50 +1,38 @@
+import {
+  useGetCartQuery,
+  useRemoveCartItemMutation,
+  useUpdateCartItemMutation,
+} from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CartItemCard, CartItem } from "../CartItem";
-
-// Mock data
-const mockCartItems: CartItem[] = [
-  {
-    id: "1",
-    productId: "1",
-    name: "Беговые кроссовки Nike Air Max",
-    price: 8990,
-    image: "https://via.placeholder.com/300",
-    size: "42",
-    quantity: 1,
-  },
-  {
-    id: "2",
-    productId: "2",
-    name: "Спортивный костюм Adidas",
-    price: 5990,
-    image: "https://via.placeholder.com/300",
-    size: "M",
-    quantity: 2,
-  },
-];
+import { CartItemCard } from "../CartItem";
 
 export const CartList = () => {
-  const [items, setItems] = useState<CartItem[]>(mockCartItems);
+  const { data: cartData, isLoading, error } = useGetCartQuery();
+  const [updateCartItem] = useUpdateCartItemMutation();
+  const [removeCartItem] = useRemoveCartItemMutation();
 
-  const handleRemove = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const handleRemove = async (id: string) => {
+    try {
+      await removeCartItem(id).unwrap();
+    } catch (error) {
+      console.error("Error removing cart item:", error);
+    }
   };
 
-  const handleQuantityChange = (id: string, quantity: number) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
+  const handleQuantityChange = async (id: string, quantity: number) => {
+    try {
+      await updateCartItem({ id, data: { quantity } }).unwrap();
+    } catch (error) {
+      console.error("Error updating cart item:", error);
+    }
   };
 
-  const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const items = cartData?.items || [];
+  const total = cartData?.total || 0;
 
   const handleCheckout = () => {
     console.log("Checkout", total);
@@ -56,7 +44,17 @@ export const CartList = () => {
         <ThemedText style={styles.title}>Корзина</ThemedText>
       </View>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.emptyContainer}>
+          <ThemedText style={styles.emptyText}>
+            Ошибка загрузки корзины
+          </ThemedText>
+        </View>
+      ) : items.length === 0 ? (
         <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>Корзина пуста</ThemedText>
           <ThemedText style={styles.emptySubtext}>
@@ -160,5 +158,10 @@ const styles = StyleSheet.create({
   checkoutButton: {
     width: "100%",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
 });
-

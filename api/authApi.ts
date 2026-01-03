@@ -1,9 +1,8 @@
 // src/api/authApi.ts
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithRefresh } from "./baseApi";
+import { baseQueryWithAuth } from "./baseApi";
 import {
   MeResponse,
-  RefreshTokenResponse,
   SignInRequest,
   SignInResponse,
   SignUpConfirmRequest,
@@ -12,7 +11,7 @@ import {
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: baseQueryWithRefresh,
+  baseQuery: baseQueryWithAuth,
   endpoints: (build) => ({
     signIn: build.mutation<SignInResponse, SignInRequest>({
       query: (body) => ({
@@ -33,15 +32,7 @@ export const authApi = createApi({
     }),
 
     signOut: build.mutation<void, void>({
-      query: () => ({ url: "/auth/sign-out", method: "POST", auth: false }),
-    }),
-
-    refreshToken: build.query<RefreshTokenResponse, void>({
-      query: () => ({
-        url: "/auth/new-access-token",
-        method: "POST",
-        auth: true,
-      }),
+      query: () => ({ url: "/auth/sign-out", method: "POST", auth: true }),
     }),
 
     profile: build.query<MeResponse, void>({
@@ -54,6 +45,5 @@ export const {
   useSignInMutation,
   useSignUpMutation,
   useSignOutMutation,
-  useRefreshTokenQuery,
   useProfileQuery,
 } = authApi;

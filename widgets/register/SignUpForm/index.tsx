@@ -42,9 +42,6 @@ const SignUpForm = () => {
       if (result.accessToken) {
         await secureStore.setAccessToken(result.accessToken);
       }
-      if (result.refreshToken) {
-        await secureStore.setRefreshToken(result.refreshToken);
-      }
 
       dispatch(
         setCredentials({
@@ -53,7 +50,7 @@ const SignUpForm = () => {
         })
       );
 
-      router.navigate("/(app)/home");
+      router.navigate("/(tabs)/home");
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred.";
 

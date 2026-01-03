@@ -1,10 +1,19 @@
+import {
+  useAddToFavoritesMutation,
+  useGetFavoritesQuery,
+  useGetProductsQuery,
+  useRemoveFromFavoritesMutation,
+} from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Product, ProductCard } from "@/widgets/products/ProductCard";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useRouter } from "expo-router";
-import { useState } from "react";
 import {
+  ProductCard,
+  ProductWithFavorite,
+} from "@/widgets/products/ProductCard";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -15,88 +24,55 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PromoBanner } from "../PromoBanner";
 
-// Mock data
-const mockProducts: Product[] = [
-  {
-    id: "1",
-    name: "Беговые кроссовки Nike Air Max",
-    price: 8990,
-    oldPrice: 12990,
-    image: "https://via.placeholder.com/300",
-    category: "Обувь",
-    rating: 4.5,
-    isFavorite: false,
-  },
-  {
-    id: "2",
-    name: "Спортивный костюм Adidas",
-    price: 5990,
-    image: "https://via.placeholder.com/300",
-    category: "Одежда",
-    rating: 4.8,
-    isFavorite: true,
-  },
-  {
-    id: "3",
-    name: "Гантели 10 кг",
-    price: 2490,
-    oldPrice: 2990,
-    image: "https://via.placeholder.com/300",
-    category: "Инвентарь",
-    rating: 4.2,
-    isFavorite: false,
-  },
-  {
-    id: "4",
-    name: "Футбольный мяч",
-    price: 1990,
-    image: "https://via.placeholder.com/300",
-    category: "Инвентарь",
-    rating: 4.7,
-    isFavorite: false,
-  },
-  {
-    id: "5",
-    name: "Спортивная сумка",
-    price: 3490,
-    image: "https://via.placeholder.com/300",
-    category: "Аксессуары",
-    rating: 4.3,
-    isFavorite: true,
-  },
-  {
-    id: "6",
-    name: "Протеиновый коктейль",
-    price: 1490,
-    oldPrice: 1990,
-    image: "https://via.placeholder.com/300",
-    category: "Питание",
-    rating: 4.6,
-    isFavorite: false,
-  },
-];
-
 export const HomeScreen = () => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [favorites, setFavorites] = useState<Set<string>>(new Set(["2", "5"]));
 
-  const handleFavoritePress = (productId: string) => {
-    setFavorites((prev) => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(productId)) {
-        newFavorites.delete(productId);
+  // Получаем популярные товары
+  const {
+    data: productsData,
+    isLoading: isLoadingProducts,
+    error: productsError,
+  } = useGetProductsQuery({
+    limit: 6,
+    offset: 0,
+    sortBy: "rating",
+    sortOrder: "desc",
+  });
+
+  // Получаем избранные товары для определения статуса
+  const { data: favoritesData } = useGetFavoritesQuery({
+    limit: 100,
+    offset: 0,
+  });
+
+  const [addToFavorites] = useAddToFavoritesMutation();
+  const [removeFromFavorites] = useRemoveFromFavoritesMutation();
+
+  // Создаем Set из ID избранных товаров
+  const favoritesSet = useMemo(() => {
+    return new Set(favoritesData?.products.map((p) => p.id) || []);
+  }, [favoritesData]);
+
+  const handleFavoritePress = async (productId: string) => {
+    try {
+      if (favoritesSet.has(productId)) {
+        await removeFromFavorites(productId).unwrap();
       } else {
-        newFavorites.add(productId);
+        await addToFavorites(productId).unwrap();
       }
-      return newFavorites;
-    });
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
-  const productsWithFavorites = mockProducts.map((product) => ({
-    ...product,
-    isFavorite: favorites.has(product.id),
-  }));
+  // Преобразуем продукты с флагом избранного
+  const productsWithFavorites: ProductWithFavorite[] = useMemo(() => {
+    if (!productsData?.products) return [];
+    return productsData.products.map((product) => ({
+      ...product,
+      isFavorite: favoritesSet.has(product.id),
+    }));
+  }, [productsData, favoritesSet]);
 
   const handleSearchPress = () => {
     // Navigate to search screen
@@ -150,20 +126,38 @@ export const HomeScreen = () => {
           <ThemedText style={styles.sectionTitle}>Популярные товары</ThemedText>
         </View>
         <View style={styles.productsContainer}>
-          <FlatList
-            data={productsWithFavorites}
-            numColumns={2}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                onFavoritePress={handleFavoritePress}
-              />
-            )}
-            contentContainerStyle={styles.productsList}
-            columnWrapperStyle={styles.row}
-            scrollEnabled={false}
-          />
+          {isLoadingProducts ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+          ) : productsError ? (
+            <View style={styles.errorContainer}>
+              <ThemedText style={styles.errorText}>
+                Ошибка загрузки товаров
+              </ThemedText>
+            </View>
+          ) : productsWithFavorites.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <ThemedText style={styles.emptyText}>
+                Товары не найдены
+              </ThemedText>
+            </View>
+          ) : (
+            <FlatList
+              data={productsWithFavorites}
+              numColumns={2}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <ProductCard
+                  product={item}
+                  onFavoritePress={handleFavoritePress}
+                />
+              )}
+              contentContainerStyle={styles.productsList}
+              columnWrapperStyle={styles.row}
+              scrollEnabled={false}
+            />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -224,5 +218,25 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
+  },
+  loadingContainer: {
+    paddingVertical: 40,
+    alignItems: "center",
+  },
+  errorContainer: {
+    paddingVertical: 40,
+    alignItems: "center",
+  },
+  errorText: {
+    color: Colors.REJECT,
+    fontSize: 16,
+  },
+  emptyContainer: {
+    paddingVertical: 40,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: Colors.textSecondary,
+    fontSize: 16,
   },
 });

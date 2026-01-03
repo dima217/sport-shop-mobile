@@ -1,22 +1,20 @@
+import type { Product } from "@/api/types/products";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  image: string;
-  category: string;
-  rating?: number;
+// Расширяем Product для UI нужд
+export interface ProductWithFavorite extends Omit<Product, "category"> {
   isFavorite?: boolean;
+  // Для обратной совместимости с компонентами
+  image?: string; // Первое изображение из массива images
+  category?: string | Product["category"]; // Название категории или объект
 }
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductWithFavorite;
   onFavoritePress?: (productId: string) => void;
 }
 
@@ -24,7 +22,7 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
   const router = useRouter();
 
   const handlePress = () => {
-    router.push(`/(tabs)/product/${product.id}`);
+    router.push(`/product/${product.id}`);
   };
 
   const handleFavoritePress = (e: any) => {
@@ -35,6 +33,13 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
   const discount = product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
+
+  // Используем первое изображение из массива или image для обратной совместимости
+  const imageUrl = product.images?.[0] || product.image || "";
+  const categoryName =
+    typeof product.category === "string"
+      ? product.category
+      : product.category?.name || "";
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
@@ -54,10 +59,10 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
             color={product.isFavorite ? Colors.primary : Colors.textSecondary}
           />
         </TouchableOpacity>
-        <Image source={{ uri: product.image }} style={styles.image} />
+        <Image source={{ uri: imageUrl }} style={styles.image} />
       </View>
       <View style={styles.infoContainer}>
-        <ThemedText style={styles.category}>{product.category}</ThemedText>
+        <ThemedText style={styles.category}>{categoryName}</ThemedText>
         <ThemedText style={styles.name} numberOfLines={2}>
           {product.name}
         </ThemedText>
@@ -80,6 +85,9 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
   );
 };
 
+// Экспортируем для обратной совместимости
+export type { Product } from "@/api/types/products";
+
 const styles = StyleSheet.create({
   container: {
     width: "48%",
@@ -94,7 +102,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 3,
   },
   imageContainer: {
     width: "100%",

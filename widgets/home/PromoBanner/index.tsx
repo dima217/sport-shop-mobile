@@ -18,7 +18,6 @@ export const PromoBanner = ({
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <RadialGradientBackground style={styles.radialContainer} />
-
       <Image source={{ uri: image }} style={styles.image} />
       <View style={styles.overlay} />
       <View style={styles.content}>
