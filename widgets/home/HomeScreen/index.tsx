@@ -1,19 +1,19 @@
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { Product, ProductCard } from "@/widgets/products/ProductCard";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  FlatList,
   ScrollView,
   StyleSheet,
-  View,
   TextInput,
   TouchableOpacity,
-  FlatList,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { PromoBanner } from "../PromoBanner";
-import { ProductCard, Product } from "@/widgets/products/ProductCard";
-import { useRouter } from "expo-router";
 
 // Mock data
 const mockProducts: Product[] = [
@@ -79,9 +79,7 @@ const mockProducts: Product[] = [
 export const HomeScreen = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [favorites, setFavorites] = useState<Set<string>>(
-    new Set(["2", "5"])
-  );
+  const [favorites, setFavorites] = useState<Set<string>>(new Set(["2", "5"]));
 
   const handleFavoritePress = (productId: string) => {
     setFavorites((prev) => {
@@ -228,4 +226,3 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
-

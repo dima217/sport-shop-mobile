@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export interface CartItem {
   id: string;

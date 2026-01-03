@@ -1,5 +1,5 @@
-import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
+import RadialGradientBackground from "@/shared/ui/RadialGradientBackground";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface PromoBannerProps {
@@ -17,11 +17,15 @@ export const PromoBanner = ({
 }: PromoBannerProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
+      <RadialGradientBackground style={styles.radialContainer} />
+
       <Image source={{ uri: image }} style={styles.image} />
       <View style={styles.overlay} />
       <View style={styles.content}>
         <ThemedText style={styles.title}>{title}</ThemedText>
-        {subtitle && <ThemedText style={styles.subtitle}>{subtitle}</ThemedText>}
+        {subtitle && (
+          <ThemedText style={styles.subtitle}>{subtitle}</ThemedText>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -40,6 +44,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "cover",
+  },
+  radialContainer: {
+    borderRadius: 20,
+    ...StyleSheet.absoluteFillObject,
   },
   overlay: {
     position: "absolute",
@@ -68,4 +76,3 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
 });
-
