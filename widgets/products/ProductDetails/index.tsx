@@ -64,7 +64,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
       return;
     }
 
-    // Если размеров нет или только один размер - автоматически выбираем его
     let finalSize = selectedSize;
     if (!finalSize && product.sizes && product.sizes.length > 0) {
       if (product.sizes.length === 1) {
@@ -72,7 +71,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
       }
     }
 
-    // Если цветов нет или только один цвет - автоматически выбираем его
     let finalColor = selectedColor;
     if (!finalColor && product.colors && product.colors.length > 0) {
       if (product.colors.length === 1) {
@@ -80,7 +78,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
       }
     }
 
-    // Если размеров больше одного и не выбран - не добавляем
     if (product.sizes && product.sizes.length > 1 && !finalSize) {
       return;
     }
@@ -92,7 +89,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
         size: finalSize || null,
         color: finalColor || null,
       }).unwrap();
-      // Можно показать уведомление об успешном добавлении
     } catch (error) {
       console.error("Error adding to cart:", error);
     }

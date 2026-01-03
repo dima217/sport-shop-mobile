@@ -177,5 +177,36 @@ export const en = {
     belarusian: "Беларуская",
     english: "English",
   },
+
+  // Checkout
+  checkout: {
+    title: "Checkout",
+    deliveryAddress: "Delivery Address",
+    paymentMethod: "Payment Method",
+    comment: "Comment",
+    commentLabel: "Order comment (optional)",
+    submit: "Place Order",
+    placeholders: {
+      street: "123 Main St, Apt 4",
+      city: "Moscow",
+      postalCode: "123456",
+      country: "Russia",
+      comment: "Additional notes for your order",
+    },
+    errors: {
+      streetRequired: "Street is required",
+      cityRequired: "City is required",
+      postalCodeRequired: "Postal code is required",
+      countryRequired: "Country is required",
+    },
+    success: {
+      title: "Order Placed",
+      message: "Your order has been successfully created. You can track its status in 'My Orders' section.",
+    },
+    error: {
+      title: "Error",
+      message: "Failed to place order. Please try again.",
+    },
+  },
 };
 

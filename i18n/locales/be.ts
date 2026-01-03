@@ -177,5 +177,36 @@ export const be = {
     belarusian: "Беларуская",
     english: "English",
   },
+
+  // Checkout
+  checkout: {
+    title: "Афармленне заказу",
+    deliveryAddress: "Адрас дастаўкі",
+    paymentMethod: "Спосаб аплаты",
+    comment: "Каментарый",
+    commentLabel: "Каментарый да заказу (неабавязкова)",
+    submit: "Аформіць заказ",
+    placeholders: {
+      street: "вул. Леніна, д. 10, кв. 25",
+      city: "Мінск",
+      postalCode: "220000",
+      country: "Беларусь",
+      comment: "Дадатковыя пажаданні да заказу",
+    },
+    errors: {
+      streetRequired: "Пазначце вуліцу",
+      cityRequired: "Пазначце горад",
+      postalCodeRequired: "Пазначце паштовы індэкс",
+      countryRequired: "Пазначце краіну",
+    },
+    success: {
+      title: "Заказ аформлены",
+      message: "Ваш заказ паспяхова створаны. Вы можаце адсочваць яго статус у раздзеле 'Мае заказы'.",
+    },
+    error: {
+      title: "Памылка",
+      message: "Не атрымалася аформіць заказ. Паспрабуйце яшчэ раз.",
+    },
+  },
 };
 

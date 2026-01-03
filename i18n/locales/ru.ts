@@ -177,5 +177,36 @@ export const ru = {
     belarusian: "Беларуская",
     english: "English",
   },
+
+  // Checkout
+  checkout: {
+    title: "Оформление заказа",
+    deliveryAddress: "Адрес доставки",
+    paymentMethod: "Способ оплаты",
+    comment: "Комментарий",
+    commentLabel: "Комментарий к заказу (необязательно)",
+    submit: "Оформить заказ",
+    placeholders: {
+      street: "ул. Ленина, д. 10, кв. 25",
+      city: "Москва",
+      postalCode: "123456",
+      country: "Россия",
+      comment: "Дополнительные пожелания к заказу",
+    },
+    errors: {
+      streetRequired: "Укажите улицу",
+      cityRequired: "Укажите город",
+      postalCodeRequired: "Укажите почтовый индекс",
+      countryRequired: "Укажите страну",
+    },
+    success: {
+      title: "Заказ оформлен",
+      message: "Ваш заказ успешно создан. Вы можете отслеживать его статус в разделе 'Мои заказы'.",
+    },
+    error: {
+      title: "Ошибка",
+      message: "Не удалось оформить заказ. Попробуйте еще раз.",
+    },
+  },
 };
 

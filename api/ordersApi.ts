@@ -26,7 +26,7 @@ export const ordersApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Order"],
+      invalidatesTags: ["Order", "Cart"], // Инвалидируем и корзину, чтобы она обновилась
     }),
   }),
 });

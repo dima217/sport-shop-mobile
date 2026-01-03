@@ -8,10 +8,12 @@ import { useTranslation } from "@/hooks/useTranslation";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
+import { useRouter } from "expo-router";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { CartItemCard } from "../CartItem";
 
 export const CartList = () => {
+  const router = useRouter();
   const { t } = useTranslation();
   const { data: cartData, isLoading, error } = useGetCartQuery();
   const [updateCartItem] = useUpdateCartItemMutation();
@@ -37,7 +39,8 @@ export const CartList = () => {
   const total = cartData?.total || 0;
 
   const handleCheckout = () => {
-    console.log("Checkout", total);
+    if (items.length === 0) return;
+    router.push("/checkout");
   };
 
   return (
