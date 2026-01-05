@@ -13,6 +13,7 @@ export const be = {
     success: "Паспяхова",
     confirm: "Пацвердзіць",
     close: "Закрыць",
+    ok: "ОК",
   },
 
   // Auth
@@ -73,6 +74,10 @@ export const be = {
     sortByPrice: "Па цане",
     sortByRating: "Па рэйтынгу",
     sortInStock: "У наяўнасці",
+    errors: {
+      sizeRequired: "Калі ласка, выберыце памер",
+      colorRequired: "Калі ласка, выберыце колер",
+    },
   },
 
   // Categories
@@ -125,6 +130,15 @@ export const be = {
   orders: {
     title: "Мае заказы",
     orderNumber: "Заказ",
+    statusLabel: "Статус",
+    deliveryAddress: "Адрас дастаўкі",
+    paymentInfo: "Спосаб аплаты",
+    comment: "Каментарый",
+    items: "Тавары",
+    product: "Тавар",
+    total: "Усяго",
+    createdAt: "Дата стварэння",
+    errorLoading: "Памылка загрузкі заказу",
     status: {
       pending: "Чакае",
       processing: "Апрацоўваецца",
@@ -206,6 +220,36 @@ export const be = {
     error: {
       title: "Памылка",
       message: "Не атрымалася аформіць заказ. Паспрабуйце яшчэ раз.",
+    },
+  },
+
+  // Reviews
+  reviews: {
+    title: "Адзнакі",
+    writeReview: "Напісаць адзнаку",
+    submit: "Адправіць адзнаку",
+    update: "Абнавіць адзнаку",
+    rating: "Ацэнка",
+    comment: "Каментарый",
+    commentPlaceholder: "Падзяліцеся сваёй думкай пра тавар...",
+    anonymous: "Ананімны карыстальнік",
+    edited: "Адрэдагавана",
+    noReviews: "Пакуль няма адзнак",
+    noReviewsSubtext: "Будзьце першым, хто пакіне адзнаку!",
+    errorLoading: "Памылка загрузкі адзнак",
+    deleteConfirm: {
+      title: "Выдаліць адзнаку?",
+      message: "Вы ўпэўнены, што хочаце выдаліць сваю адзнаку? Гэта дзеянне нельга адмяніць.",
+    },
+    commentHint: "Засталося сімвалаў: {{count}}",
+    errors: {
+      ratingRequired: "Калі ласка, выберыце ацэнку",
+      commentRequired: "Калі ласка, напішыце каментарый",
+      commentMinLength: "Каментарый павінен змяшчаць мінімум 10 сімвалаў",
+      commentMaxLength: "Каментарый не павінен перавышаць 2000 сімвалаў",
+      submitFailed: "Не атрымалася адправіць адзнаку",
+      deleteFailed: "Не атрымалася выдаліць адзнаку",
+      unknown: "Адбылася невядомая памылка",
     },
   },
 };

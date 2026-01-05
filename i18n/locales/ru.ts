@@ -13,6 +13,7 @@ export const ru = {
     success: "Успешно",
     confirm: "Подтвердить",
     close: "Закрыть",
+    ok: "ОК",
   },
 
   // Auth
@@ -73,6 +74,10 @@ export const ru = {
     sortByPrice: "По цене",
     sortByRating: "По рейтингу",
     sortInStock: "В наличии",
+    errors: {
+      sizeRequired: "Пожалуйста, выберите размер",
+      colorRequired: "Пожалуйста, выберите цвет",
+    },
   },
 
   // Categories
@@ -125,6 +130,15 @@ export const ru = {
   orders: {
     title: "Мои заказы",
     orderNumber: "Заказ",
+    statusLabel: "Статус",
+    deliveryAddress: "Адрес доставки",
+    paymentInfo: "Способ оплаты",
+    comment: "Комментарий",
+    items: "Товары",
+    product: "Товар",
+    total: "Итого",
+    createdAt: "Дата создания",
+    errorLoading: "Ошибка загрузки заказа",
     status: {
       pending: "Ожидает",
       processing: "Обрабатывается",
@@ -206,6 +220,36 @@ export const ru = {
     error: {
       title: "Ошибка",
       message: "Не удалось оформить заказ. Попробуйте еще раз.",
+    },
+  },
+
+  // Reviews
+  reviews: {
+    title: "Отзывы",
+    writeReview: "Написать отзыв",
+    submit: "Отправить отзыв",
+    update: "Обновить отзыв",
+    rating: "Оценка",
+    comment: "Комментарий",
+    commentPlaceholder: "Поделитесь своим мнением о товаре...",
+    anonymous: "Анонимный пользователь",
+    edited: "Отредактировано",
+    noReviews: "Пока нет отзывов",
+    noReviewsSubtext: "Будьте первым, кто оставит отзыв!",
+    errorLoading: "Ошибка загрузки отзывов",
+    deleteConfirm: {
+      title: "Удалить отзыв?",
+      message: "Вы уверены, что хотите удалить свой отзыв? Это действие нельзя отменить.",
+    },
+    commentHint: "Осталось символов: {{count}}",
+    errors: {
+      ratingRequired: "Пожалуйста, выберите оценку",
+      commentRequired: "Пожалуйста, напишите комментарий",
+      commentMinLength: "Комментарий должен содержать минимум 10 символов",
+      commentMaxLength: "Комментарий не должен превышать 2000 символов",
+      submitFailed: "Не удалось отправить отзыв",
+      deleteFailed: "Не удалось удалить отзыв",
+      unknown: "Произошла неизвестная ошибка",
     },
   },
 };

@@ -4,6 +4,7 @@ import { categoriesApi } from "@/api/categoriesApi";
 import { favoritesApi } from "@/api/favoritesApi";
 import { ordersApi } from "@/api/ordersApi";
 import { productsApi } from "@/api/productsApi";
+import { reviewsApi } from "@/api/reviewsApi";
 import { usersApi } from "@/api/usersApi";
 import authReducer from "@/store/slices/authSlice";
 import languageReducer from "@/store/slices/languageSlice";
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   [cartApi.reducerPath]: cartApi.reducer,
   [favoritesApi.reducerPath]: favoritesApi.reducer,
   [ordersApi.reducerPath]: ordersApi.reducer,
+  [reviewsApi.reducerPath]: reviewsApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
 });
 
@@ -43,6 +45,7 @@ export const store = configureStore({
       .concat(cartApi.middleware)
       .concat(favoritesApi.middleware)
       .concat(ordersApi.middleware)
+      .concat(reviewsApi.middleware)
       .concat(usersApi.middleware),
 });
 

@@ -5,4 +5,5 @@ export * from "./categoriesApi";
 export * from "./favoritesApi";
 export * from "./ordersApi";
 export * from "./productsApi";
+export * from "./reviewsApi";
 export * from "./usersApi";

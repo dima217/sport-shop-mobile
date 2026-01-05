@@ -1,5 +1,6 @@
 import { useGetOrdersQuery } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -29,23 +30,6 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusText = (status: string) => {
-  switch (status) {
-    case "pending":
-      return "Ожидает";
-    case "processing":
-      return "Обрабатывается";
-    case "shipped":
-      return "Отправлен";
-    case "delivered":
-      return "Доставлен";
-    case "cancelled":
-      return "Отменен";
-    default:
-      return status;
-  }
-};
-
 interface OrderCardProps {
   order: {
     id: string;
@@ -59,9 +43,30 @@ interface OrderCardProps {
   onPress: () => void;
 }
 
+const getStatusTranslationKey = (
+  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled"
+):
+  | "orders.status.pending"
+  | "orders.status.processing"
+  | "orders.status.shipped"
+  | "orders.status.delivered"
+  | "orders.status.cancelled" => {
+  return `orders.status.${status}` as any;
+};
+
 const OrderCard = ({ order, onPress }: OrderCardProps) => {
+  const { t } = useTranslation();
   const statusColor = getStatusColor(order.status);
-  const statusText = getStatusText(order.status);
+  const statusText = t(
+    getStatusTranslationKey(
+      order.status as
+        | "pending"
+        | "processing"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
+    )
+  );
   const date = new Date(order.createdAt).toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
@@ -73,7 +78,7 @@ const OrderCard = ({ order, onPress }: OrderCardProps) => {
       <View style={styles.orderHeader}>
         <View style={styles.orderInfo}>
           <ThemedText style={styles.orderId}>
-            Заказ #{order.id.slice(0, 8)}
+            {t("orders.orderNumber")} #{order.id.slice(0, 8)}
           </ThemedText>
           <ThemedText style={styles.orderDate}>{date}</ThemedText>
         </View>
@@ -104,7 +109,9 @@ const OrderCard = ({ order, onPress }: OrderCardProps) => {
             color={Colors.textSecondary}
           />
           <ThemedText style={styles.detailText}>
-            {order.paymentMethod === "card" ? "Карта" : "Наличные"}
+            {order.paymentMethod === "card"
+              ? t("orders.paymentMethod.card")
+              : t("orders.paymentMethod.cash")}
           </ThemedText>
         </View>
       </View>
@@ -123,18 +130,21 @@ const OrderCard = ({ order, onPress }: OrderCardProps) => {
 
 export const OrdersScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { data: orders, isLoading, error } = useGetOrdersQuery();
 
   const handleOrderPress = (orderId: string) => {
-    // TODO: Navigate to order details
-    console.log("Order details", orderId);
+    router.push({
+      pathname: "/profile/orders/[id]" as any,
+      params: { id: orderId },
+    });
   };
 
   if (isLoading) {
     return (
       <View style={styles.container}>
         <Header
-          title="Мои заказы"
+          title={t("orders.title")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -152,7 +162,7 @@ export const OrdersScreen = () => {
     return (
       <View style={styles.container}>
         <Header
-          title="Мои заказы"
+          title={t("orders.title")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -161,7 +171,7 @@ export const OrdersScreen = () => {
         />
         <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
-            Ошибка загрузки заказов
+            {t("profile.errorLoadingOrders")}
           </ThemedText>
         </View>
       </View>
@@ -171,7 +181,7 @@ export const OrdersScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Мои заказы"
+        title={t("orders.title")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -187,10 +197,10 @@ export const OrdersScreen = () => {
             color={Colors.textSecondary}
           />
           <ThemedText style={styles.emptyText}>
-            У вас пока нет заказов
+            {t("profile.noOrders")}
           </ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            Сделайте первый заказ и он появится здесь
+            {t("profile.noOrdersSubtext")}
           </ThemedText>
         </View>
       ) : (
@@ -215,7 +225,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingTop: 80,
+    paddingTop: 100,
     paddingBottom: 16,
   },
   orderCard: {

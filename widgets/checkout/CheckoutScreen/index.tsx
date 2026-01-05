@@ -60,7 +60,7 @@ export const CheckoutScreen = () => {
     }
 
     try {
-      const order = await createOrder({
+      await createOrder({
         deliveryAddress: {
           street: formData.street.trim(),
           city: formData.city.trim(),
@@ -71,25 +71,19 @@ export const CheckoutScreen = () => {
         comment: formData.comment.trim() || null,
       }).unwrap();
 
-      // Очищаем корзину после успешного создания заказа
       await clearCart().unwrap();
 
-      Alert.alert(
-        t("checkout.success.title"),
-        t("checkout.success.message"),
-        [
-          {
-            text: t("common.ok"),
-            onPress: () => {
-              router.replace("/(tabs)/profile");
-              // Можно также перейти на экран заказов
-              setTimeout(() => {
-                router.push("/profile/orders");
-              }, 100);
-            },
+      Alert.alert(t("checkout.success.title"), t("checkout.success.message"), [
+        {
+          text: t("common.ok"),
+          onPress: () => {
+            router.replace("/(tabs)/profile");
+            setTimeout(() => {
+              router.push("/profile/orders");
+            }, 100);
           },
-        ]
-      );
+        },
+      ]);
     } catch (error: any) {
       console.error("Error creating order:", error);
       Alert.alert(
@@ -165,7 +159,7 @@ export const CheckoutScreen = () => {
           />
         </View>
 
-        <View style={styles.section}>
+        <View style={styles.sectionPayment}>
           <ThemedText style={styles.sectionTitle}>
             {t("checkout.paymentMethod")}
           </ThemedText>
@@ -242,9 +236,7 @@ export const CheckoutScreen = () => {
           <TextInput
             label={t("checkout.commentLabel")}
             value={formData.comment}
-            onChangeText={(text) =>
-              setFormData({ ...formData, comment: text })
-            }
+            onChangeText={(text) => setFormData({ ...formData, comment: text })}
             placeholder={t("checkout.placeholders.comment")}
             multiline
             numberOfLines={4}
@@ -277,6 +269,13 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   section: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.INPUT_LINE,
+  },
+  sectionPayment: {
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
@@ -325,4 +324,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-

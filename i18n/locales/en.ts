@@ -13,6 +13,7 @@ export const en = {
     success: "Success",
     confirm: "Confirm",
     close: "Close",
+    ok: "OK",
   },
 
   // Auth
@@ -73,6 +74,10 @@ export const en = {
     sortByPrice: "By Price",
     sortByRating: "By Rating",
     sortInStock: "In Stock",
+    errors: {
+      sizeRequired: "Please select a size",
+      colorRequired: "Please select a color",
+    },
   },
 
   // Categories
@@ -125,6 +130,15 @@ export const en = {
   orders: {
     title: "My Orders",
     orderNumber: "Order",
+    statusLabel: "Status",
+    deliveryAddress: "Delivery Address",
+    paymentInfo: "Payment Method",
+    comment: "Comment",
+    items: "Items",
+    product: "Product",
+    total: "Total",
+    createdAt: "Created At",
+    errorLoading: "Error loading order",
     status: {
       pending: "Pending",
       processing: "Processing",
@@ -206,6 +220,36 @@ export const en = {
     error: {
       title: "Error",
       message: "Failed to place order. Please try again.",
+    },
+  },
+
+  // Reviews
+  reviews: {
+    title: "Reviews",
+    writeReview: "Write a review",
+    submit: "Submit review",
+    update: "Update review",
+    rating: "Rating",
+    comment: "Comment",
+    commentPlaceholder: "Share your thoughts about the product...",
+    anonymous: "Anonymous user",
+    edited: "Edited",
+    noReviews: "No reviews yet",
+    noReviewsSubtext: "Be the first to leave a review!",
+    errorLoading: "Error loading reviews",
+    deleteConfirm: {
+      title: "Delete review?",
+      message: "Are you sure you want to delete your review? This action cannot be undone.",
+    },
+    commentHint: "Characters remaining: {{count}}",
+    errors: {
+      ratingRequired: "Please select a rating",
+      commentRequired: "Please write a comment",
+      commentMinLength: "Comment must be at least 10 characters long",
+      commentMaxLength: "Comment must not exceed 2000 characters",
+      submitFailed: "Failed to submit review",
+      deleteFailed: "Failed to delete review",
+      unknown: "An unknown error occurred",
     },
   },
 };

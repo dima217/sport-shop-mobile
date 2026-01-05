@@ -8,7 +8,7 @@ import {
 import { FetchArgsWithAuth } from "./types/base";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://192.168.79.195:3000",
+  baseUrl: "http://192.168.12.195:3000",
   credentials: "include",
   prepareHeaders: async (headers, { getState }) => {
     const token = await secureStore.getAccessToken();
