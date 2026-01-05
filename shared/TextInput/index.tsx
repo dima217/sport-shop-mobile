@@ -40,16 +40,22 @@ const TextInput = ({
       <View
         style={[
           styles.inputContainer,
+          rest.multiline && styles.inputContainerMultiline,
           hasError && styles.errorInputContainer,
           !editable && styles.disabledInputContainer,
         ]}
       >
         {left && <View style={styles.leftContainer}>{left}</View>}
         <RNTextInput
-          style={[styles.textInput, inputStyle]}
+          style={[
+            styles.textInput,
+            rest.multiline && styles.textInputMultiline,
+            inputStyle,
+          ]}
           editable={editable}
           enablesReturnKeyAutomatically
           placeholderTextColor={Colors.text}
+          textAlignVertical={rest.multiline ? "top" : "center"}
           {...rest}
         />
         {right && <View style={styles.rightContainer}>{right}</View>}

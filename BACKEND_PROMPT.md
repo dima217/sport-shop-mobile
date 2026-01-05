@@ -63,7 +63,6 @@
       id: string;
       firstName: string;
       lastName: string;
-      avatarUrl: string | null;
     }
   }
 }
@@ -112,8 +111,7 @@
 {
   id: string;
   email: string;
-  name: string;          // Полное имя (firstName + lastName)
-  avatar?: string | null;
+  name: string; // Полное имя (firstName + lastName)
 }
 ```
 

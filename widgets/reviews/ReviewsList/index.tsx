@@ -100,25 +100,26 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
   }
 
   const reviews = data?.reviews || [];
-  const hasMore = data ? reviews.length < data.total : false;
+  const total = data?.total ?? 0;
+  const hasMore = data ? reviews.length < total : false;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <ThemedText style={styles.title}>
-          {`${t("reviews.title")} (${data?.total || 0})`}
+          {`${t("reviews.title")} (${total})`}
         </ThemedText>
-        {data?.averageRating && (
+        {data?.averageRating != null && data.averageRating > 0 ? (
           <View style={styles.ratingSummary}>
             <FontAwesome name="star" size={18} color="#FFD700" />
             <ThemedText style={styles.averageRating}>
               {data.averageRating.toFixed(1)}
             </ThemedText>
           </View>
-        )}
+        ) : null}
       </View>
 
-      {userIdNumber && !myReview && !showForm && (
+      {userIdNumber && !myReview && !showForm ? (
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => setShowForm(true)}
@@ -128,9 +129,9 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
             {t("reviews.writeReview")}
           </ThemedText>
         </TouchableOpacity>
-      )}
+      ) : null}
 
-      {showForm && (
+      {showForm ? (
         <ReviewForm
           initialRating={editingReview && myReview ? myReview.rating : 0}
           initialComment={
@@ -170,7 +171,7 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
             editingReview ? t("reviews.update") : t("reviews.submit")
           }
         />
-      )}
+      ) : null}
 
       {reviews.length === 0 && !showForm ? (
         <View style={styles.emptyContainer}>

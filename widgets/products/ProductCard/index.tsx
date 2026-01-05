@@ -74,12 +74,14 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
             </ThemedText>
           )}
         </View>
-        {product.rating && (
-          <View style={styles.ratingContainer}>
-            <FontAwesome name="star" size={14} color="#FFD700" />
-            <ThemedText style={styles.rating}>{product.rating}</ThemedText>
-          </View>
-        )}
+        {product.rating !== null &&
+          product.rating !== undefined &&
+          product.rating > 0 && (
+            <View style={styles.ratingContainer}>
+              <FontAwesome name="star" size={14} color="#FFD700" />
+              <ThemedText style={styles.rating}>{product.rating}</ThemedText>
+            </View>
+          )}
       </View>
     </TouchableOpacity>
   );

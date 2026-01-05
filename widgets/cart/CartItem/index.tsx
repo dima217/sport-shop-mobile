@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
+    marginRight: 12,
     justifyContent: "space-between",
   },
   name: {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   controlsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 4,
   },
   quantityButton: {
     width: 32,

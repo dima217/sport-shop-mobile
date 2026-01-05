@@ -32,7 +32,8 @@ export const FilterChips = ({
               sortBy === "price" && styles.chipTextActive,
             ]}
           >
-            По цене {sortBy === "price" && (sortOrder === "asc" ? "↑" : "↓")}
+            По цене
+            {sortBy === "price" ? (sortOrder === "asc" ? " ↑" : " ↓") : ""}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity

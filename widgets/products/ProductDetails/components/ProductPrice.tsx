@@ -11,9 +11,9 @@ export const ProductPrice = ({ price, oldPrice }: ProductPriceProps) => {
   return (
     <View style={styles.container}>
       <ThemedText style={styles.price}>{price} ₽</ThemedText>
-      {oldPrice && (
+      {oldPrice ? (
         <ThemedText style={styles.oldPrice}>{oldPrice} ₽</ThemedText>
-      )}
+      ) : null}
     </View>
   );
 };

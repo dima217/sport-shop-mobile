@@ -81,8 +81,9 @@ export const ReviewForm = ({
   return (
     <View style={styles.container}>
       <ThemedText style={styles.label}>
-        {t("reviews.rating")}
-        {rating > 0 ? ` (${rating}/5)` : ""}
+        {rating > 0
+          ? `${t("reviews.rating")} (${rating}/5)`
+          : t("reviews.rating")}
       </ThemedText>
       <View style={styles.ratingContainer}>
         <StarRating rating={rating} onRatingChange={setRating} size={28} />
@@ -161,7 +162,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cancelButton: {},
-  submitButton: {},
+  submitButton: {
+    paddingHorizontal: 0,
+  },
   hintText: {
     fontSize: 12,
     color: Colors.textSecondary,

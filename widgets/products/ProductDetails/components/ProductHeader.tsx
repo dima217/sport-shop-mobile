@@ -21,22 +21,22 @@ export const ProductHeader = ({
 
   return (
     <View style={styles.container}>
-      {categoryName && (
+      {categoryName ? (
         <ThemedText style={styles.category}>{categoryName}</ThemedText>
-      )}
+      ) : null}
       <ThemedText style={styles.name}>{productName}</ThemedText>
 
-      {rating && (
+      {rating !== null && rating !== undefined && rating > 0 ? (
         <View style={styles.ratingContainer}>
           <FontAwesome name="star" size={16} color="#FFD700" />
           <ThemedText style={styles.rating}>{rating}</ThemedText>
-          {reviewCount !== undefined && (
+          {reviewCount !== undefined && reviewCount !== null ? (
             <ThemedText style={styles.reviews}>
               ({reviewCount} {t("products.reviews")})
             </ThemedText>
-          )}
+          ) : null}
         </View>
-      )}
+      ) : null}
     </View>
   );
 };

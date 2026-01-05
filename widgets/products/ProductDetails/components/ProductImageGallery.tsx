@@ -24,14 +24,14 @@ export const ProductImageGallery = ({
           }}
           style={styles.mainImage}
         />
-        {discount !== undefined && discount > 0 && (
+        {discount !== undefined && discount > 0 ? (
           <View style={styles.discountBadge}>
             <ThemedText style={styles.discountText}>-{discount}%</ThemedText>
           </View>
-        )}
+        ) : null}
       </View>
 
-      {images.length > 1 && (
+      {images.length > 1 ? (
         <View style={styles.thumbnailContainer}>
           {images.map((image, index) => (
             <TouchableOpacity
@@ -46,7 +46,7 @@ export const ProductImageGallery = ({
             </TouchableOpacity>
           ))}
         </View>
-      )}
+      ) : null}
     </>
   );
 };

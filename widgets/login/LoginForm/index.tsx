@@ -50,7 +50,6 @@ const LoginForm = () => {
             email: userData.email,
             firstName: result.user.profile.firstName,
             lastName: result.user.profile.lastName,
-            avatarUrl: result.user.profile.avatarUrl,
           },
           accessToken: result.accessToken,
         })

@@ -28,6 +28,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.INPUT_LINE,
   },
+  inputContainerMultiline: {
+    alignItems: "flex-start",
+    paddingVertical: 4,
+  },
   rightContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -46,6 +50,12 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.MEDIUM,
     padding: 0,
     color: Colors.text,
+  },
+  textInputMultiline: {
+    height: undefined,
+    minHeight: 30,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
   errorContainer: {
     paddingHorizontal: 8,

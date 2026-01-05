@@ -80,7 +80,7 @@ export const HomeScreen = () => {
   const handleSearchPress = () => {
     if (searchQuery.trim()) {
       router.push({
-        pathname: "/products" as any,
+        pathname: "/products",
         params: {
           search: searchQuery.trim(),
         },

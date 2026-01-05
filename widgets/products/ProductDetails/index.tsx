@@ -116,7 +116,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
     }
   };
 
-  // Проверяем, можно ли добавить в корзину
   const canAddToCart = useMemo(() => {
     if (!product || !product.inStock) {
       return false;
@@ -125,7 +124,6 @@ export const ProductDetails = ({ productId }: ProductDetailsProps) => {
     const hasMultipleSizes = product.sizes && product.sizes.length > 1;
     const hasMultipleColors = product.colors && product.colors.length > 1;
 
-    // Если есть множественные опции, проверяем что они выбраны
     if (hasMultipleSizes && !watchedValues.size) {
       return false;
     }

@@ -6,7 +6,6 @@ export interface Review {
     id: number;
     firstName: string;
     lastName: string;
-    avatarUrl?: string | null;
   };
   rating: number; // 1-5
   comment: string;
@@ -48,4 +47,3 @@ export interface ReviewsQueryParams {
   sortOrder?: "asc" | "desc";
   rating?: number; // Фильтр по рейтингу (1-5)
 }
-

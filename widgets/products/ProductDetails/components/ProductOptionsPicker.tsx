@@ -36,14 +36,16 @@ export const ProductOptionsPicker = ({
 
   return (
     <View style={styles.container}>
-      {sizes && sizes.length > 0 && (
+      {sizes && sizes.length > 0 ? (
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>
-            {t("products.size")}
-            {hasMultipleSizes && (
-              <ThemedText style={styles.required}> *</ThemedText>
-            )}
-          </ThemedText>
+          <View style={styles.titleContainer}>
+            <ThemedText style={styles.sectionTitle}>
+              {t("products.size")}
+            </ThemedText>
+            {hasMultipleSizes ? (
+              <ThemedText style={styles.required}>*</ThemedText>
+            ) : null}
+          </View>
           <Controller
             control={control}
             name="size"
@@ -76,25 +78,27 @@ export const ProductOptionsPicker = ({
                     </TouchableOpacity>
                   ))}
                 </View>
-                {errors.size && (
+                {errors.size ? (
                   <ThemedText style={styles.errorText}>
                     {errors.size.message}
                   </ThemedText>
-                )}
+                ) : null}
               </>
             )}
           />
         </View>
-      )}
+      ) : null}
 
-      {colors && colors.length > 0 && (
+      {colors && colors.length > 0 ? (
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>
-            {t("products.color")}
-            {hasMultipleColors && (
-              <ThemedText style={styles.required}> *</ThemedText>
-            )}
-          </ThemedText>
+          <View style={styles.titleContainer}>
+            <ThemedText style={styles.sectionTitle}>
+              {t("products.color")}
+            </ThemedText>
+            {hasMultipleColors ? (
+              <ThemedText style={styles.required}>*</ThemedText>
+            ) : null}
+          </View>
           <Controller
             control={control}
             name="color"
@@ -127,16 +131,16 @@ export const ProductOptionsPicker = ({
                     </TouchableOpacity>
                   ))}
                 </View>
-                {errors.color && (
+                {errors.color ? (
                   <ThemedText style={styles.errorText}>
                     {errors.color.message}
                   </ThemedText>
-                )}
+                ) : null}
               </>
             )}
           />
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
@@ -148,14 +152,21 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 8,
   },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: Colors.text,
-    marginBottom: 12,
   },
   required: {
+    fontSize: 16,
+    fontWeight: "600",
     color: Colors.REJECT,
+    marginLeft: 2,
   },
   optionsContainer: {
     flexDirection: "row",

@@ -1,18 +1,27 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "./baseApi";
 
+/**
+ * Admin-only API for user management.
+ * For updating current user profile, use authApi.updateProfile instead.
+ */
 export interface UpdateUserDto {
-  firstName?: string;
-  lastName?: string;
-  avatarUrl?: string | null;
+  role?: "user" | "admin";
+  isBanned?: boolean;
 }
 
 export interface UserResponse {
-  id: string;
+  id: number;
+  uuid: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl: string | null;
+  role: string;
+  isBanned: boolean;
+  isOAuthUser: boolean;
+  profile?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export const usersApi = createApi({
@@ -20,11 +29,20 @@ export const usersApi = createApi({
   baseQuery: baseQueryWithAuth,
   tagTypes: ["User"],
   endpoints: (build) => ({
+    /**
+     * Get user by ID (Admin only)
+     * Endpoint: GET /users/{id}
+     */
     getUser: build.query<UserResponse, string>({
       query: (id) => `/users/${id}`,
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
 
+    /**
+     * Update user (Admin only) - for role and ban status
+     * Endpoint: PUT /users/{id}
+     * For updating current user profile, use authApi.updateProfile
+     */
     updateUser: build.mutation<
       UserResponse,
       { id: string; data: UpdateUserDto }
@@ -36,7 +54,20 @@ export const usersApi = createApi({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
     }),
+
+    /**
+     * Delete user (Admin only)
+     * Endpoint: DELETE /users/{id}
+     */
+    deleteUser: build.mutation<void, string>({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "User", id }],
+    }),
   }),
 });
 
-export const { useGetUserQuery, useUpdateUserMutation } = usersApi;
+export const { useGetUserQuery, useUpdateUserMutation, useDeleteUserMutation } =
+  usersApi;

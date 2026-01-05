@@ -8,7 +8,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import {
   FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -139,20 +138,13 @@ export const ProfileScreen = () => {
         {/* Profile Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
-            {profile?.avatarUrl ? (
-              <Image
-                source={{ uri: profile.avatarUrl }}
-                style={styles.avatar}
-              />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <ThemedText style={styles.avatarText}>
-                  {profile?.firstName?.[0]?.toUpperCase() ||
-                    profile?.email?.[0]?.toUpperCase() ||
-                    "U"}
-                </ThemedText>
-              </View>
-            )}
+            <View style={styles.avatarPlaceholder}>
+              <ThemedText style={styles.avatarText}>
+                {profile?.firstName?.[0]?.toUpperCase() ||
+                  profile?.email?.[0]?.toUpperCase() ||
+                  "U"}
+              </ThemedText>
+            </View>
           </View>
           <View style={styles.profileInfo}>
             <ThemedText style={styles.profileName}>
@@ -223,12 +215,6 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     marginRight: 16,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.backgroundSecondary,
   },
   avatarPlaceholder: {
     width: 80,

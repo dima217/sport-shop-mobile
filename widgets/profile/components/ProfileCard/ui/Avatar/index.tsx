@@ -3,14 +3,10 @@ import { styles } from "./styles";
 
 interface AvatarProps {
   size?: "small" | "medium" | "large" | number;
-  uri?: string;
   title?: string;
 }
 
-const Avatar = ({ size, uri, title }: AvatarProps) => {
-  if (uri) {
-    return <RNAvatar rounded source={{ uri: uri }} size={size} />;
-  }
+const Avatar = ({ size, title }: AvatarProps) => {
   if (title) {
     return (
       <RNAvatar
@@ -22,6 +18,7 @@ const Avatar = ({ size, uri, title }: AvatarProps) => {
       />
     );
   }
+  return null;
 };
 
 export default Avatar;

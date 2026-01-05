@@ -7,11 +7,14 @@ import {
   SignInResponse,
   SignUpConfirmRequest,
   SignUpConfirmResponse,
+  UpdateProfileRequest,
+  UpdateProfileResponse,
 } from "./types/auth";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithAuth,
+  tagTypes: ["Profile"],
   endpoints: (build) => ({
     signIn: build.mutation<SignInResponse, SignInRequest>({
       query: (body) => ({
@@ -37,6 +40,17 @@ export const authApi = createApi({
 
     profile: build.query<MeResponse, void>({
       query: () => ({ url: "/profile", method: "GET", auth: true }),
+      providesTags: ["Profile"],
+    }),
+
+    updateProfile: build.mutation<UpdateProfileResponse, UpdateProfileRequest>({
+      query: (data) => ({
+        url: "/profile/update",
+        method: "POST",
+        body: data,
+        auth: true,
+      }),
+      invalidatesTags: ["Profile"],
     }),
   }),
 });
@@ -46,4 +60,5 @@ export const {
   useSignUpMutation,
   useSignOutMutation,
   useProfileQuery,
+  useUpdateProfileMutation,
 } = authApi;

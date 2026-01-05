@@ -10,7 +10,6 @@ export interface SignInResponse {
       id: string;
       firstName: string;
       lastName: string;
-      avatarUrl: string | null;
     };
   };
 }
@@ -38,5 +37,15 @@ export interface MeResponse {
   id: string;
   email: string;
   name: string;
-  avatar?: string | null;
+}
+
+export interface UpdateProfileResponse {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface UpdateProfileRequest {
+  firstName?: string;
+  lastName?: string;
 }

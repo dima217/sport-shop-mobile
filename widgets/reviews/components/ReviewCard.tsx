@@ -1,7 +1,7 @@
+import { Review } from "@/api/types/reviews";
 import { Colors } from "@/constants/design-tokens";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
-import { Review } from "@/api/types/reviews";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { StarRating } from "./StarRating";
@@ -35,17 +35,11 @@ export const ReviewCard = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          {review.user?.avatarUrl ? (
-            <View style={styles.avatarContainer}>
-              <FontAwesome name="user-circle" size={40} color={Colors.primary} />
-            </View>
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <ThemedText style={styles.avatarText}>
-                {userName.charAt(0).toUpperCase()}
-              </ThemedText>
-            </View>
-          )}
+          <View style={styles.avatarPlaceholder}>
+            <ThemedText style={styles.avatarText}>
+              {userName.charAt(0).toUpperCase()}
+            </ThemedText>
+          </View>
           <View style={styles.userDetails}>
             <ThemedText style={styles.userName}>{userName}</ThemedText>
             <ThemedText style={styles.date}>{date}</ThemedText>
@@ -105,12 +99,6 @@ const styles = StyleSheet.create({
     gap: 12,
     flex: 1,
   },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
   avatarPlaceholder: {
     width: 40,
     height: 40,
@@ -159,4 +147,3 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 });
-
