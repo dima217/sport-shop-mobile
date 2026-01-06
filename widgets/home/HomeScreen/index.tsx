@@ -5,16 +5,18 @@ import {
   useRemoveFromFavoritesMutation,
 } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useProductUpdates } from "@/hooks/data/useProductUpdates";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
+import { RootState } from "@/store/store";
 import {
   ProductCard,
   ProductWithFavorite,
 } from "@/widgets/products/ProductCard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -23,6 +25,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { PromoBanner } from "../PromoBanner";
 
 export const HomeScreen = () => {
@@ -35,6 +38,8 @@ export const HomeScreen = () => {
     ProductWithFavorite[]
   >([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
   const {
     data: productsData,
@@ -94,6 +99,34 @@ export const HomeScreen = () => {
       setIsLoadingMore(false);
     }
   }, [productsData, favoritesSet, page]);
+
+  const handleProductUpdate = useCallback(
+    (updatedProduct: any) => {
+      setAccumulatedProducts((prev) => {
+        if (prev.length === 0) return prev;
+
+        const index = prev.findIndex((p) => p.id === updatedProduct.id);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updatedProduct,
+            isFavorite: favoritesSet.has(updatedProduct.id),
+          };
+          return updated;
+        }
+
+        return prev;
+      });
+    },
+    [favoritesSet]
+  );
+
+  useProductUpdates(
+    accessToken || "",
+    handleProductUpdate,
+    undefined,
+    !!accessToken
+  );
 
   useEffect(() => {
     setAccumulatedProducts((prev) => {

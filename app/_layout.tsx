@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/design-tokens";
 import { NetworkProvider, useNetwork } from "@/providers/NetworkProvider";
+import { WebSocketProvider } from "@/providers/WebSocketProvider";
 import { persistor, store } from "@/store/store";
 import { NoInternetScreen } from "@/widgets/internet/NoInternetScreen";
 import { Stack } from "expo-router";
@@ -40,8 +41,10 @@ export default function RootLayout() {
     <NetworkProvider>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <LayoutContent />
-          <StatusBar style="auto" />
+          <WebSocketProvider>
+            <LayoutContent />
+            <StatusBar style="auto" />
+          </WebSocketProvider>
         </PersistGate>
       </Provider>
     </NetworkProvider>

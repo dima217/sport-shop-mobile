@@ -160,10 +160,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   button: {
-    flex: 1,
+    width: "48%",
   },
   cancelButton: {},
-  submitButton: {},
+  submitButton: {
+    paddingHorizontal: 0,
+  },
   hintText: {
     fontSize: 12,
     color: Colors.textSecondary,
