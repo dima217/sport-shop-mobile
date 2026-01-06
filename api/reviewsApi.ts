@@ -102,6 +102,10 @@ export const reviewsApi = createApi({
 
     getMyReview: build.query<Review | null, string>({
       query: (productId) => `/products/${productId}/reviews/me`,
+      // Явно указываем ключ кэша для каждого productId
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}(${queryArgs})`;
+      },
       providesTags: (result, error, productId) => [
         { type: "Review", id: `MY-${productId}` },
       ],

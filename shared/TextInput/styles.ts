@@ -5,7 +5,7 @@ import { Colors, FONT_FAMILIES, FONT_SIZES } from "@/constants/design-tokens";
 
 const styles = StyleSheet.create({
   container: {
-    width: wp("80%"),
+    width: wp("90%"),
   },
   labelContainer: {
     paddingHorizontal: 8,

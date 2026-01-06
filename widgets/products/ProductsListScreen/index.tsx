@@ -124,6 +124,17 @@ export const ProductsListScreen = () => {
     }
   }, [productsData, favoritesSet, page]);
 
+  // Обновляем статус избранного для всех накопленных товаров при изменении favoritesData
+  useEffect(() => {
+    setAccumulatedProducts((prev) => {
+      if (prev.length === 0) return prev;
+      return prev.map((product) => ({
+        ...product,
+        isFavorite: favoritesSet.has(product.id),
+      }));
+    });
+  }, [favoritesSet]);
+
   const productsWithFavorites = accumulatedProducts;
 
   const title = params.categorySlug

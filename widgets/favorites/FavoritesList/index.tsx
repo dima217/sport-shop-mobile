@@ -24,16 +24,24 @@ export const FavoritesList = () => {
   const handleFavoritePress = async (productId: string) => {
     try {
       await removeFromFavorites(productId).unwrap();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error removing from favorites:", error);
+      // Если товар не найден (404) или уже удален, просто игнорируем ошибку
+      // RTK Query автоматически обновит список после инвалидации тега
+      if (error?.status !== 404) {
+        // Для других ошибок можно показать уведомление, но не блокируем UI
+      }
     }
   };
 
+  // Фильтруем некорректные данные (товары без обязательных полей)
   const favorites: ProductWithFavorite[] =
-    favoritesData?.products.map((product) => ({
-      ...product,
-      isFavorite: true,
-    })) || [];
+    favoritesData?.products
+      .filter((product) => product && product.id && product.name)
+      .map((product) => ({
+        ...product,
+        isFavorite: true,
+      })) || [];
 
   return (
     <View style={styles.container}>

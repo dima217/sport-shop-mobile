@@ -10,7 +10,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { RootState } from "@/store/store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -42,13 +42,30 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
     sortOrder: "desc",
   });
 
-  const { data: myReview } = useGetMyReviewQuery(productId);
+  const { data: myReview, refetch: refetchMyReview } = useGetMyReviewQuery(
+    productId,
+    {
+      skip: !userIdNumber,
+    }
+  );
   const [deleteReview] = useDeleteReviewMutation();
   const [createReview] = useCreateReviewMutation();
   const [updateReview] = useUpdateReviewMutation();
 
   const [showForm, setShowForm] = useState(false);
   const [editingReview, setEditingReview] = useState<string | null>(null);
+
+  useEffect(() => {
+    setShowForm(false);
+    setEditingReview(null);
+  }, [productId]);
+
+  const isMyReview = useMemo(() => {
+    if (!myReview || !userIdNumber) return false;
+    return myReview.userId === userIdNumber && myReview.productId === productId;
+  }, [myReview, userIdNumber, productId]);
+
+  const hasMyReview = isMyReview;
 
   const handleDelete = (reviewId: string) => {
     Alert.alert(
@@ -66,6 +83,7 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
             try {
               await deleteReview({ productId, reviewId }).unwrap();
               refetch();
+              refetchMyReview();
             } catch (error) {
               console.error("Error deleting review:", error);
               Alert.alert(t("reviews.errors.deleteFailed"));
@@ -119,7 +137,7 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
         ) : null}
       </View>
 
-      {userIdNumber && !myReview && !showForm ? (
+      {userIdNumber && !hasMyReview && !showForm ? (
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => setShowForm(true)}
@@ -133,13 +151,17 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
 
       {showForm ? (
         <ReviewForm
-          initialRating={editingReview && myReview ? myReview.rating : 0}
+          initialRating={
+            editingReview && hasMyReview && myReview ? myReview.rating : 0
+          }
           initialComment={
-            editingReview && myReview ? myReview.comment || "" : ""
+            editingReview && hasMyReview && myReview
+              ? myReview.comment || ""
+              : ""
           }
           onSubmit={async (rating, comment) => {
             try {
-              if (editingReview && myReview) {
+              if (editingReview && hasMyReview && myReview) {
                 await updateReview({
                   productId,
                   reviewId: myReview.id,
@@ -155,6 +177,7 @@ export const ReviewsList = ({ productId }: ReviewsListProps) => {
               setShowForm(false);
               setEditingReview(null);
               refetch();
+              refetchMyReview();
             } catch (error: any) {
               console.error("Error submitting review:", error);
               Alert.alert(

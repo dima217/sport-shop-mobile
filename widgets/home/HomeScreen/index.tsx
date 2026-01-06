@@ -95,6 +95,16 @@ export const HomeScreen = () => {
     }
   }, [productsData, favoritesSet, page]);
 
+  useEffect(() => {
+    setAccumulatedProducts((prev) => {
+      if (prev.length === 0) return prev;
+      return prev.map((product) => ({
+        ...product,
+        isFavorite: favoritesSet.has(product.id),
+      }));
+    });
+  }, [favoritesSet]);
+
   const productsWithFavorites = accumulatedProducts;
 
   const handleSearchPress = () => {
