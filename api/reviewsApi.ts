@@ -66,7 +66,7 @@ export const reviewsApi = createApi({
       }),
       invalidatesTags: (result, error, { productId }) => [
         { type: "Review", id: `LIST-${productId}` },
-        // Продукт будет инвалидирован через productsApi
+        { type: "Review", id: `MY-${productId}` },
       ],
     }),
 
@@ -82,6 +82,7 @@ export const reviewsApi = createApi({
       invalidatesTags: (result, error, { productId, reviewId }) => [
         { type: "Review", id: reviewId },
         { type: "Review", id: `LIST-${productId}` },
+        { type: "Review", id: `MY-${productId}` },
       ],
     }),
 
@@ -94,6 +95,7 @@ export const reviewsApi = createApi({
         invalidatesTags: (result, error, { productId, reviewId }) => [
           { type: "Review", id: reviewId },
           { type: "Review", id: `LIST-${productId}` },
+          { type: "Review", id: `MY-${productId}` },
         ],
       }
     ),

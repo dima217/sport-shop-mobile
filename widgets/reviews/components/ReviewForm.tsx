@@ -156,15 +156,14 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
   },
   button: {
     flex: 1,
   },
   cancelButton: {},
-  submitButton: {
-    paddingHorizontal: 0,
-  },
+  submitButton: {},
   hintText: {
     fontSize: 12,
     color: Colors.textSecondary,
