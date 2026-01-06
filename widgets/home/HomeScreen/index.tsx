@@ -14,11 +14,10 @@ import {
 } from "@/widgets/products/ProductCard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -30,20 +29,25 @@ export const HomeScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const limit = 16;
+  const [accumulatedProducts, setAccumulatedProducts] = useState<
+    ProductWithFavorite[]
+  >([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Получаем популярные товары
   const {
     data: productsData,
     isLoading: isLoadingProducts,
+    isFetching: isFetchingProducts,
     error: productsError,
   } = useGetProductsQuery({
-    limit: 6,
-    offset: 0,
+    limit,
+    offset: page * limit,
     sortBy: "rating",
     sortOrder: "desc",
   });
 
-  // Получаем избранные товары для определения статуса
   const { data: favoritesData } = useGetFavoritesQuery({
     limit: 100,
     offset: 0,
@@ -52,7 +56,6 @@ export const HomeScreen = () => {
   const [addToFavorites] = useAddToFavoritesMutation();
   const [removeFromFavorites] = useRemoveFromFavoritesMutation();
 
-  // Создаем Set из ID избранных товаров
   const favoritesSet = useMemo(() => {
     return new Set(favoritesData?.products.map((p) => p.id) || []);
   }, [favoritesData]);
@@ -69,13 +72,30 @@ export const HomeScreen = () => {
     }
   };
 
-  const productsWithFavorites: ProductWithFavorite[] = useMemo(() => {
-    if (!productsData?.products) return [];
-    return productsData.products.map((product) => ({
-      ...product,
-      isFavorite: favoritesSet.has(product.id),
-    }));
-  }, [productsData, favoritesSet]);
+  useEffect(() => {
+    if (productsData?.products) {
+      const newProductsWithFavorites: ProductWithFavorite[] =
+        productsData.products.map((product) => ({
+          ...product,
+          isFavorite: favoritesSet.has(product.id),
+        }));
+
+      if (page === 0) {
+        setAccumulatedProducts(newProductsWithFavorites);
+      } else {
+        setAccumulatedProducts((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const uniqueNewProducts = newProductsWithFavorites.filter(
+            (p) => !existingIds.has(p.id)
+          );
+          return [...prev, ...uniqueNewProducts];
+        });
+      }
+      setIsLoadingMore(false);
+    }
+  }, [productsData, favoritesSet, page]);
+
+  const productsWithFavorites = accumulatedProducts;
 
   const handleSearchPress = () => {
     if (searchQuery.trim()) {
@@ -87,6 +107,28 @@ export const HomeScreen = () => {
       });
     }
   };
+
+  const handleLoadMore = () => {
+    if (
+      productsData &&
+      accumulatedProducts.length < productsData.total &&
+      !isFetchingProducts &&
+      !isLoadingProducts &&
+      !isLoadingMore
+    ) {
+      setIsLoadingMore(true);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+      }, 1000);
+    }
+  };
+
+  const hasMore =
+    productsData &&
+    accumulatedProducts.length < productsData.total &&
+    !isFetchingProducts;
+
+  const showLoader = isLoadingMore || (isFetchingProducts && hasMore);
 
   return (
     <View style={styles.container}>
@@ -119,59 +161,62 @@ export const HomeScreen = () => {
         </View>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.promoContainer}>
-          <PromoBanner
-            title="Скидки до 50%"
-            subtitle="На всю коллекцию спортивной одежды"
-            image="https://via.placeholder.com/400x200"
-            onPress={() => console.log("Promo pressed")}
-          />
+      {isLoadingProducts && page === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
         </View>
-        <View style={styles.sectionHeader}>
-          <ThemedText style={styles.sectionTitle}>
-            {t("home.popularProducts")}
+      ) : productsError ? (
+        <View style={styles.errorContainer}>
+          <ThemedText style={styles.errorText}>
+            {t("home.errorLoading")}
           </ThemedText>
         </View>
-        {isLoadingProducts ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.primary} />
-          </View>
-        ) : productsError ? (
-          <View style={styles.errorContainer}>
-            <ThemedText style={styles.errorText}>
-              {t("home.errorLoading")}
-            </ThemedText>
-          </View>
-        ) : productsWithFavorites.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <ThemedText style={styles.emptyText}>
-              {t("home.noProducts")}
-            </ThemedText>
-          </View>
-        ) : (
-          <View style={styles.productsContainer}>
-            <FlatList
-              data={productsWithFavorites}
-              numColumns={2}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <ProductCard
-                  product={item}
-                  onFavoritePress={handleFavoritePress}
+      ) : (
+        <FlatList
+          data={productsWithFavorites}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProductCard product={item} onFavoritePress={handleFavoritePress} />
+          )}
+          contentContainerStyle={styles.content}
+          columnWrapperStyle={styles.row}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View>
+              <View style={styles.promoContainer}>
+                <PromoBanner
+                  title="Скидки до 50%"
+                  subtitle="На всю коллекцию спортивной одежды"
+                  image="https://via.placeholder.com/400x200"
+                  onPress={() => console.log("Promo pressed")}
                 />
-              )}
-              contentContainerStyle={styles.productsList}
-              columnWrapperStyle={styles.row}
-              scrollEnabled={false}
-            />
-          </View>
-        )}
-      </ScrollView>
+              </View>
+              <View style={styles.sectionHeader}>
+                <ThemedText style={styles.sectionTitle}>
+                  {t("home.popularProducts")}
+                </ThemedText>
+              </View>
+            </View>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <ThemedText style={styles.emptyText}>
+                {t("home.noProducts")}
+              </ThemedText>
+            </View>
+          }
+          ListFooterComponent={
+            showLoader ? (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator size="small" color={Colors.primary} />
+              </View>
+            ) : null
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+        />
+      )}
     </View>
   );
 };
@@ -204,16 +249,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.text,
   },
-  scrollView: {
-    flex: 1,
-  },
   content: {
     paddingBottom: 20,
-  },
-  promoContainer: {
     paddingHorizontal: 16,
-    marginBottom: 8,
   },
+  promoContainer: {},
   sectionHeader: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -222,12 +262,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: Colors.text,
-  },
-  productsContainer: {
-    paddingHorizontal: 16,
-  },
-  productsList: {
-    paddingBottom: 16,
   },
   row: {
     justifyContent: "space-between",
@@ -251,5 +285,9 @@ const styles = StyleSheet.create({
   emptyText: {
     color: Colors.textSecondary,
     fontSize: 16,
+  },
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: "center",
   },
 });
