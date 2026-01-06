@@ -1,17 +1,24 @@
+import { Colors } from "@/constants/design-tokens";
 import {
   ProductCard,
   ProductWithFavorite,
 } from "@/widgets/products/ProductCard";
-import { FlatList, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 
 interface ProductsGridProps {
   products: ProductWithFavorite[];
   onFavoritePress: (productId: string) => void;
+  onEndReached?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 export const ProductsGrid = ({
   products,
   onFavoritePress,
+  onEndReached,
+  hasMore,
+  isLoadingMore,
 }: ProductsGridProps) => {
   return (
     <FlatList
@@ -24,6 +31,15 @@ export const ProductsGrid = ({
       contentContainerStyle={styles.content}
       columnWrapperStyle={styles.row}
       showsVerticalScrollIndicator={false}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isLoadingMore && hasMore ? (
+          <View style={styles.footerLoader}>
+            <ActivityIndicator size="small" color={Colors.primary} />
+          </View>
+        ) : null
+      }
     />
   );
 };
@@ -36,5 +52,9 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
+  },
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: "center",
   },
 });

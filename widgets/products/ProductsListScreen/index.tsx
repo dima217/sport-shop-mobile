@@ -10,7 +10,7 @@ import { Header } from "@/shared/layout/Header";
 import { ProductWithFavorite } from "@/widgets/products/ProductCard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -31,6 +31,12 @@ export const ProductsListScreen = () => {
 
   const [searchQuery, setSearchQuery] = useState(params.search || "");
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(0);
+  const limit = 16;
+  const [accumulatedProducts, setAccumulatedProducts] = useState<
+    ProductWithFavorite[]
+  >([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filters, setFilters] = useState({
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
@@ -51,6 +57,7 @@ export const ProductsListScreen = () => {
   const {
     data: productsData,
     isLoading,
+    isFetching,
     error,
   } = useGetProductsQuery({
     categoryId: params.categoryId,
@@ -65,8 +72,8 @@ export const ProductsListScreen = () => {
     inStock: filters.inStock,
     sortBy: filters.sortBy,
     sortOrder: filters.sortOrder,
-    limit: 20,
-    offset: 0,
+    limit,
+    offset: page * limit,
   });
 
   const { data: favoritesData } = useGetFavoritesQuery({
@@ -93,19 +100,42 @@ export const ProductsListScreen = () => {
     }
   };
 
-  const productsWithFavorites: ProductWithFavorite[] = useMemo(() => {
-    if (!productsData?.products) return [];
-    return productsData.products.map((product) => ({
-      ...product,
-      isFavorite: favoritesSet.has(product.id),
-    }));
-  }, [productsData, favoritesSet]);
+  // Накопление товаров при получении новых данных
+  useEffect(() => {
+    if (productsData?.products) {
+      const newProductsWithFavorites: ProductWithFavorite[] =
+        productsData.products.map((product) => ({
+          ...product,
+          isFavorite: favoritesSet.has(product.id),
+        }));
+
+      if (page === 0) {
+        setAccumulatedProducts(newProductsWithFavorites);
+      } else {
+        setAccumulatedProducts((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const uniqueNewProducts = newProductsWithFavorites.filter(
+            (p) => !existingIds.has(p.id)
+          );
+          return [...prev, ...uniqueNewProducts];
+        });
+      }
+      setIsLoadingMore(false);
+    }
+  }, [productsData, favoritesSet, page]);
+
+  const productsWithFavorites = accumulatedProducts;
 
   const title = params.categorySlug
     ? "Товары"
     : params.search
     ? `Поиск: ${params.search}`
     : "Все товары";
+
+  // Сбрасываем страницу при изменении параметров URL
+  useEffect(() => {
+    setPage(0);
+  }, [params.categoryId, params.categorySlug, params.search]);
 
   const handleSortByPrice = () => {
     setFilters((prev) => ({
@@ -114,6 +144,7 @@ export const ProductsListScreen = () => {
       sortOrder:
         prev.sortBy === "price" && prev.sortOrder === "asc" ? "desc" : "asc",
     }));
+    setPage(0);
   };
 
   const handleSortByRating = () => {
@@ -122,6 +153,7 @@ export const ProductsListScreen = () => {
       sortBy: "rating",
       sortOrder: "desc",
     }));
+    setPage(0);
   };
 
   const handleToggleInStock = () => {
@@ -129,7 +161,30 @@ export const ProductsListScreen = () => {
       ...prev,
       inStock: prev.inStock === true ? undefined : true,
     }));
+    setPage(0);
   };
+
+  const handleLoadMore = () => {
+    if (
+      productsData &&
+      accumulatedProducts.length < productsData.total &&
+      !isFetching &&
+      !isLoading &&
+      !isLoadingMore
+    ) {
+      setIsLoadingMore(true);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+      }, 1000);
+    }
+  };
+
+  const hasMore =
+    productsData &&
+    accumulatedProducts.length < productsData.total &&
+    !isFetching;
+
+  const showLoader = isLoadingMore || (isFetching && hasMore);
 
   return (
     <View style={styles.container}>
@@ -152,7 +207,13 @@ export const ProductsListScreen = () => {
       />
 
       <View style={styles.contentWrapper}>
-        <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        <SearchBar
+          value={searchQuery}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            setPage(0);
+          }}
+        />
 
         {showFilters && (
           <FilterChips
@@ -165,7 +226,7 @@ export const ProductsListScreen = () => {
           />
         )}
 
-        {isLoading ? (
+        {isLoading && page === 0 ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={Colors.primary} />
           </View>
@@ -183,6 +244,9 @@ export const ProductsListScreen = () => {
           <ProductsGrid
             products={productsWithFavorites}
             onFavoritePress={handleFavoritePress}
+            onEndReached={handleLoadMore}
+            hasMore={hasMore}
+            isLoadingMore={showLoader}
           />
         )}
       </View>
