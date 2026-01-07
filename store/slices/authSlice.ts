@@ -59,6 +59,12 @@ const slice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    setBanned(state) {
+      state.user = null;
+      state.accessToken = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+    },
   },
 });
 
@@ -69,5 +75,6 @@ export const {
   setUser,
   clearAuth,
   setLoading,
+  setBanned,
 } = slice.actions;
 export default slice.reducer;

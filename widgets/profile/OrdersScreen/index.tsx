@@ -1,8 +1,10 @@
 import { useGetOrdersQuery } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useOrderUpdates } from "@/hooks/data/useOrderUpdates";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
+import { RootState } from "@/store/store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import {
@@ -12,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -132,6 +135,10 @@ export const OrdersScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const { data: orders, isLoading, error } = useGetOrdersQuery();
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+
+  // Подключаем WebSocket обновления для заказов
+  useOrderUpdates(accessToken || "", undefined, !!accessToken);
 
   const handleOrderPress = (orderId: string) => {
     router.push({

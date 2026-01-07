@@ -1,4 +1,5 @@
 import { Category } from "./categories";
+import { Order } from "./orders";
 import { Product } from "./products";
 
 // Базовый тип для всех WebSocket событий
@@ -63,6 +64,27 @@ export interface CategoryDeletedPayload extends WebSocketEventPayload {
   categoryId: string;
 }
 
+// События заказов
+export interface OrderCreatedPayload extends WebSocketEventPayload {
+  order: Order;
+}
+
+export interface OrderUpdatedPayload extends WebSocketEventPayload {
+  order: Order;
+}
+
+export interface OrderStatusChangedPayload extends WebSocketEventPayload {
+  orderId: string;
+  oldStatus: string;
+  newStatus: string;
+  order: Order;
+}
+
+export interface OrderCancelledPayload extends WebSocketEventPayload {
+  orderId: string;
+  order: Order;
+}
+
 // Типы событий
 export enum WebSocketEvent {
   PRODUCT_CREATED = "product:created",
@@ -75,4 +97,8 @@ export enum WebSocketEvent {
   CATEGORY_CREATED = "category:created",
   CATEGORY_UPDATED = "category:updated",
   CATEGORY_DELETED = "category:deleted",
+  ORDER_CREATED = "order:created",
+  ORDER_UPDATED = "order:updated",
+  ORDER_STATUS_UPDATED = "order:status_updated",
+  ORDER_CANCELLED = "order:cancelled",
 }

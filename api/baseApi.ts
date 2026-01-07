@@ -1,10 +1,11 @@
 import { secureStore } from "@/services/secureStore";
-import { clearAuth } from "@/store/slices/authSlice";
+import { clearAuth, setBanned } from "@/store/slices/authSlice";
 import {
   BaseQueryFn,
   fetchBaseQuery,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import { Alert } from "react-native";
 import { FetchArgsWithAuth } from "./types/base";
 
 const rawBaseQuery = fetchBaseQuery({
@@ -31,8 +32,24 @@ export const baseQueryWithAuth: BaseQueryFn<
   const result = await rawBaseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    api.dispatch(clearAuth());
-    await secureStore.setAccessToken(null);
+    const errorMessage =
+      (result.error.data as any)?.message ||
+      (result.error.data as any)?.error ||
+      "";
+
+    if (errorMessage === "Your account has been banned.") {
+      api.dispatch(setBanned());
+      await secureStore.setAccessToken(null);
+
+      Alert.alert(
+        "Account Banned",
+        "Your account has been banned by an administrator. Please contact support for more information.",
+        [{ text: "OK" }]
+      );
+    } else {
+      api.dispatch(clearAuth());
+      await secureStore.setAccessToken(null);
+    }
   }
 
   return result;
