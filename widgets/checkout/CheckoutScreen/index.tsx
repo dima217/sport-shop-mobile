@@ -1,13 +1,14 @@
 import { useClearCartMutation, useCreateOrderMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
 import { useTranslation } from "@/hooks/useTranslation";
+import { addressStorage } from "@/services/addressStorage";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import TextInput from "@/shared/TextInput";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -33,6 +34,27 @@ export const CheckoutScreen = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    loadDefaultAddress();
+  }, []);
+
+  const loadDefaultAddress = async () => {
+    try {
+      const defaultAddress = await addressStorage.getDefaultAddress();
+      if (defaultAddress) {
+        setFormData((prev) => ({
+          ...prev,
+          street: defaultAddress.street,
+          city: defaultAddress.city,
+          postalCode: defaultAddress.postalCode,
+          country: defaultAddress.country,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading default address:", error);
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};

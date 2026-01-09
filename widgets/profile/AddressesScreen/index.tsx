@@ -1,65 +1,149 @@
 import { Colors } from "@/constants/design-tokens";
+import { Address, addressStorage } from "@/services/addressStorage";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
+import TextInput from "@/shared/TextInput";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-
-interface Address {
-  id: string;
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
-  isDefault?: boolean;
-}
-
-// Mock данные для адресов
-const mockAddresses: Address[] = [
-  {
-    id: "1",
-    street: "ул. Ленина, д. 10, кв. 25",
-    city: "Москва",
-    postalCode: "123456",
-    country: "Россия",
-    isDefault: true,
-  },
-  {
-    id: "2",
-    street: "пр. Мира, д. 5",
-    city: "Санкт-Петербург",
-    postalCode: "190000",
-    country: "Россия",
-  },
-];
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  FlatList,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export const AddressesScreen = () => {
   const router = useRouter();
-  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [formData, setFormData] = useState({
+    street: "",
+    city: "",
+    postalCode: "",
+    country: "Россия",
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    loadAddresses();
+  }, []);
+
+  const loadAddresses = async () => {
+    try {
+      setIsLoading(true);
+      const loadedAddresses = await addressStorage.getAddresses();
+      setAddresses(loadedAddresses);
+    } catch (error) {
+      console.error("Error loading addresses:", error);
+      Alert.alert("Ошибка", "Не удалось загрузить адреса");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAddAddress = () => {
-    // TODO: Navigate to add address screen
-    console.log("Add address");
+    setEditingAddress(null);
+    setFormData({
+      street: "",
+      city: "",
+      postalCode: "",
+      country: "Россия",
+    });
+    setFormErrors({});
+    setShowForm(true);
   };
 
   const handleEditAddress = (address: Address) => {
-    // TODO: Navigate to edit address screen
-    console.log("Edit address", address);
+    setEditingAddress(address);
+    setFormData({
+      street: address.street,
+      city: address.city,
+      postalCode: address.postalCode,
+      country: address.country,
+    });
+    setFormErrors({});
+    setShowForm(true);
   };
 
-  const handleDeleteAddress = (id: string) => {
-    setAddresses((prev) => prev.filter((addr) => addr.id !== id));
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    if (!formData.street.trim()) {
+      errors.street = "Улица обязательна";
+    }
+    if (!formData.city.trim()) {
+      errors.city = "Город обязателен";
+    }
+    if (!formData.postalCode.trim()) {
+      errors.postalCode = "Почтовый индекс обязателен";
+    }
+    if (!formData.country.trim()) {
+      errors.country = "Страна обязательна";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const handleSetDefault = (id: string) => {
-    setAddresses((prev) =>
-      prev.map((addr) => ({
-        ...addr,
-        isDefault: addr.id === id,
-      }))
-    );
+  const handleSaveAddress = async () => {
+    if (!validateForm()) return;
+
+    try {
+      if (editingAddress) {
+        await addressStorage.updateAddress(editingAddress.id, formData);
+      } else {
+        await addressStorage.addAddress(formData);
+      }
+      await loadAddresses();
+      setShowForm(false);
+      setEditingAddress(null);
+    } catch (error) {
+      console.error("Error saving address:", error);
+      Alert.alert("Ошибка", "Не удалось сохранить адрес");
+    }
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+    Alert.alert("Удалить адрес", "Вы уверены, что хотите удалить этот адрес?", [
+      { text: "Отмена", style: "cancel" },
+      {
+        text: "Удалить",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await addressStorage.deleteAddress(id);
+            await loadAddresses();
+          } catch (error) {
+            console.error("Error deleting address:", error);
+            Alert.alert("Ошибка", "Не удалось удалить адрес");
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleSetDefault = async (id: string) => {
+    try {
+      await addressStorage.setDefaultAddress(id);
+      await loadAddresses();
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      Alert.alert("Ошибка", "Не удалось установить адрес по умолчанию");
+    }
+  };
+
+  const handleRemoveDefault = async (id: string) => {
+    try {
+      await addressStorage.removeDefaultAddress(id);
+      await loadAddresses();
+    } catch (error) {
+      console.error("Error removing default address:", error);
+      Alert.alert("Ошибка", "Не удалось отменить адрес по умолчанию");
+    }
   };
 
   const renderAddress = ({ item }: { item: Address }) => (
@@ -94,16 +178,18 @@ export const AddressesScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {!item.isDefault && (
-        <TouchableOpacity
-          style={styles.setDefaultButton}
-          onPress={() => handleSetDefault(item.id)}
-        >
-          <ThemedText style={styles.setDefaultText}>
-            Установить по умолчанию
-          </ThemedText>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={styles.setDefaultButton}
+        onPress={() =>
+          item.isDefault
+            ? handleRemoveDefault(item.id)
+            : handleSetDefault(item.id)
+        }
+      >
+        <ThemedText style={styles.setDefaultText}>
+          {item.isDefault ? "Отменить по умолчанию" : "Установить по умолчанию"}
+        </ThemedText>
+      </TouchableOpacity>
     </View>
   );
 
@@ -118,7 +204,11 @@ export const AddressesScreen = () => {
         }
       />
 
-      {addresses.length === 0 ? (
+      {isLoading ? (
+        <View style={styles.emptyContainer}>
+          <ThemedText style={styles.emptyText}>Загрузка...</ThemedText>
+        </View>
+      ) : addresses.length === 0 ? (
         <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
             У вас нет сохраненных адресов
@@ -144,6 +234,93 @@ export const AddressesScreen = () => {
           style={styles.addButton}
         />
       </View>
+
+      <Modal
+        visible={showForm}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowForm(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Header
+            title={editingAddress ? "Редактировать адрес" : "Добавить адрес"}
+            left={
+              <TouchableOpacity onPress={() => setShowForm(false)}>
+                <FontAwesome name="arrow-left" size={24} color={Colors.text} />
+              </TouchableOpacity>
+            }
+          />
+
+          <View style={styles.formContainer}>
+            <TextInput
+              label="Улица"
+              value={formData.street}
+              onChangeText={(text) => {
+                setFormData({ ...formData, street: text });
+                if (formErrors.street) {
+                  setFormErrors({ ...formErrors, street: "" });
+                }
+              }}
+              placeholder="ул. Ленина, д. 10, кв. 25"
+              errorMessage={formErrors.street}
+            />
+
+            <TextInput
+              label="Город"
+              value={formData.city}
+              onChangeText={(text) => {
+                setFormData({ ...formData, city: text });
+                if (formErrors.city) {
+                  setFormErrors({ ...formErrors, city: "" });
+                }
+              }}
+              placeholder="Москва"
+              errorMessage={formErrors.city}
+            />
+
+            <TextInput
+              label="Почтовый индекс"
+              value={formData.postalCode}
+              onChangeText={(text) => {
+                setFormData({ ...formData, postalCode: text });
+                if (formErrors.postalCode) {
+                  setFormErrors({ ...formErrors, postalCode: "" });
+                }
+              }}
+              placeholder="123456"
+              errorMessage={formErrors.postalCode}
+            />
+
+            <TextInput
+              label="Страна"
+              value={formData.country}
+              onChangeText={(text) => {
+                setFormData({ ...formData, country: text });
+                if (formErrors.country) {
+                  setFormErrors({ ...formErrors, country: "" });
+                }
+              }}
+              placeholder="Россия"
+              errorMessage={formErrors.country}
+            />
+
+            <View style={styles.formButtons}>
+              <Button
+                title={editingAddress ? "Сохранить" : "Добавить"}
+                onPress={handleSaveAddress}
+                style={styles.saveButton}
+              />
+              <Button
+                title="Отмена"
+                onPress={() => setShowForm(false)}
+                buttonColor={Colors.backgroundSecondary}
+                textColor={Colors.text}
+                style={styles.cancelButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -237,6 +414,27 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.INPUT_LINE,
   },
   addButton: {
+    width: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 90,
+    paddingBottom: 20,
+    gap: 16,
+  },
+  formButtons: {
+    marginTop: 24,
+    gap: 12,
+  },
+  saveButton: {
+    width: "100%",
+  },
+  cancelButton: {
     width: "100%",
   },
 });

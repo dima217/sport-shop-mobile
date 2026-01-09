@@ -54,7 +54,7 @@ const TextInput = ({
           ]}
           editable={editable}
           enablesReturnKeyAutomatically
-          placeholderTextColor={Colors.text}
+          placeholderTextColor={Colors.textSecondary}
           textAlignVertical={rest.multiline ? "top" : "center"}
           {...rest}
         />
