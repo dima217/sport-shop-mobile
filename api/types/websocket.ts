@@ -85,6 +85,31 @@ export interface OrderCancelledPayload extends WebSocketEventPayload {
   order: Order;
 }
 
+// События поддержки
+export interface SupportTicketCreatedPayload extends WebSocketEventPayload {
+  ticketId: number;
+  userId: number;
+  subject: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface SupportTicketRepliedPayload extends WebSocketEventPayload {
+  ticketId: number;
+  userId: number;
+  response: string;
+  status: string;
+  updatedAt: string;
+}
+
+export interface SupportTicketStatusUpdatedPayload
+  extends WebSocketEventPayload {
+  ticketId: number;
+  userId: number;
+  status: string;
+  updatedAt: string;
+}
+
 // Типы событий
 export enum WebSocketEvent {
   PRODUCT_CREATED = "product:created",
@@ -101,4 +126,7 @@ export enum WebSocketEvent {
   ORDER_UPDATED = "order:updated",
   ORDER_STATUS_UPDATED = "order:status_updated",
   ORDER_CANCELLED = "order:cancelled",
+  SUPPORT_TICKET_CREATED = "support:ticket_created",
+  SUPPORT_TICKET_REPLIED = "support:ticket_replied",
+  SUPPORT_TICKET_STATUS_UPDATED = "support:ticket_status_updated",
 }

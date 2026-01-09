@@ -6,5 +6,6 @@ export * from "./favoritesApi";
 export * from "./ordersApi";
 export * from "./productsApi";
 export * from "./reviewsApi";
+export * from "./supportApi";
 export * from "./types/websocket";
 export * from "./usersApi";

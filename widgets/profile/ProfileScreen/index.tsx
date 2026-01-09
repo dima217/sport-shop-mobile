@@ -82,8 +82,7 @@ export const ProfileScreen = () => {
       title: "Помощь и поддержка",
       icon: "question-circle",
       onPress: () => {
-        // TODO: Navigate to help screen
-        console.log("Navigate to help");
+        router.push("/profile/support");
       },
     },
     {
