@@ -30,6 +30,7 @@ export interface ProductsResponse {
 }
 
 export interface ProductsQueryParams {
+  lang?: string;
   categoryId?: string;
   categorySlug?: string;
   search?: string;

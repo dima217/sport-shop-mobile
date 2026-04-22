@@ -1,5 +1,6 @@
 import type { CartItem as CartItemType } from "@/api/types/cart";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -21,6 +22,8 @@ export const CartItemCard = ({
   onRemove,
   onQuantityChange,
 }: CartItemProps) => {
+  const { t } = useTranslation();
+
   const handleIncrease = () => {
     onQuantityChange(item.id, item.quantity + 1);
   };
@@ -46,12 +49,12 @@ export const CartItemCard = ({
       />
       <View style={styles.infoContainer}>
         <ThemedText style={styles.name} numberOfLines={2}>
-          {item.name || item.product?.name || "Товар"}
+          {item.name || item.product?.name || t("cart.item")}
         </ThemedText>
         {item.size && (
-          <ThemedText style={styles.size}>Размер: {item.size}</ThemedText>
+          <ThemedText style={styles.size}>{t("cart.size")}: {item.size}</ThemedText>
         )}
-        <ThemedText style={styles.price}>{item.price} ₽</ThemedText>
+        <ThemedText style={styles.price}>{item.price} Br</ThemedText>
       </View>
       <View style={styles.controlsContainer}>
         <TouchableOpacity

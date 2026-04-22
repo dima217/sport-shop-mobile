@@ -1,4 +1,5 @@
 export * from "./authApi";
+export * from "./bannerApi";
 export * from "./baseApi";
 export * from "./cartApi";
 export * from "./categoriesApi";

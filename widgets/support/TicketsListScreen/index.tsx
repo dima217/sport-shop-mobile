@@ -2,6 +2,7 @@ import { useGetTicketsQuery } from "@/api";
 import { Ticket, TicketStatus } from "@/api/types/support";
 import { Colors } from "@/constants/design-tokens";
 import { useSupportUpdates } from "@/hooks/data/useSupportUpdates";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import { RootState } from "@/store/store";
@@ -32,19 +33,22 @@ const getStatusColor = (status: TicketStatus) => {
   }
 };
 
-const getStatusText = (status: TicketStatus): string => {
-  switch (status) {
-    case "open":
-      return "Открыт";
-    case "in_progress":
-      return "В работе";
-    case "resolved":
-      return "Решен";
-    case "closed":
-      return "Закрыт";
-    default:
-      return status;
-  }
+const useStatusText = () => {
+  const { t } = useTranslation();
+  return (status: TicketStatus | string): string => {
+    switch (status) {
+      case "open":
+        return t("support.status.open");
+      case "in_progress":
+        return t("support.status.inProgress");
+      case "resolved":
+        return t("support.status.resolved");
+      case "closed":
+        return t("support.status.closed");
+      default:
+        return status;
+    }
+  };
 };
 
 interface TicketCardProps {
@@ -53,6 +57,8 @@ interface TicketCardProps {
 }
 
 const TicketCard = ({ ticket, onPress }: TicketCardProps) => {
+  const { t } = useTranslation();
+  const getStatusText = useStatusText();
   const statusColor = getStatusColor(ticket.status);
   const statusText = getStatusText(ticket.status);
   const date = new Date(ticket.createdAt).toLocaleDateString("ru-RU", {
@@ -83,7 +89,7 @@ const TicketCard = ({ ticket, onPress }: TicketCardProps) => {
       {hasResponse && (
         <View style={styles.responseIndicator}>
           <FontAwesome name="check-circle" size={14} color={Colors.primary} />
-          <ThemedText style={styles.responseText}>Есть ответ</ThemedText>
+          <ThemedText style={styles.responseText}>{t("support.hasResponse")}</ThemedText>
         </View>
       )}
     </TouchableOpacity>
@@ -92,6 +98,8 @@ const TicketCard = ({ ticket, onPress }: TicketCardProps) => {
 
 export const TicketsListScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
+  const getStatusText = useStatusText();
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const [statusFilter, setStatusFilter] = useState<TicketStatus | "all">("all");
   const [page, setPage] = useState(0);
@@ -130,7 +138,7 @@ export const TicketsListScreen = () => {
   ];
 
   const getFilterText = (filter: TicketStatus | "all"): string => {
-    if (filter === "all") return "Все";
+    if (filter === "all") return t("support.filterAll");
     return getStatusText(filter);
   };
 
@@ -138,7 +146,7 @@ export const TicketsListScreen = () => {
     return (
       <View style={styles.container}>
         <Header
-          title="Мои обращения"
+          title={t("support.myTickets")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -156,7 +164,7 @@ export const TicketsListScreen = () => {
     return (
       <View style={styles.container}>
         <Header
-          title="Мои обращения"
+          title={t("support.myTickets")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -165,13 +173,13 @@ export const TicketsListScreen = () => {
         />
         <View style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>
-            Ошибка загрузки обращений
+            {t("support.errorLoadingList")}
           </ThemedText>
           <TouchableOpacity
             style={styles.retryButton}
             onPress={() => refetch()}
           >
-            <ThemedText style={styles.retryButtonText}>Повторить</ThemedText>
+            <ThemedText style={styles.retryButtonText}>{t("support.retry")}</ThemedText>
           </TouchableOpacity>
         </View>
       </View>
@@ -181,7 +189,7 @@ export const TicketsListScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Мои обращения"
+        title={t("support.myTickets")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -236,16 +244,16 @@ export const TicketsListScreen = () => {
             color={Colors.textSecondary}
             style={styles.emptyIcon}
           />
-          <ThemedText style={styles.emptyText}>У вас нет обращений</ThemedText>
+          <ThemedText style={styles.emptyText}>{t("support.empty")}</ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            Создайте новое обращение, если у вас есть вопросы или проблемы
+            {t("support.emptySubtext")}
           </ThemedText>
           <TouchableOpacity
             style={styles.createButton}
             onPress={() => router.push("/profile/support/create")}
           >
             <ThemedText style={styles.createButtonText}>
-              Создать обращение
+              {t("support.createTicket")}
             </ThemedText>
           </TouchableOpacity>
         </View>

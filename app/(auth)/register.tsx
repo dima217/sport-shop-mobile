@@ -1,5 +1,6 @@
 import IconSvg from "@/assets/images/icon.svg";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import AuthPrompt from "@/shared/ui/AuthPrompt";
 import SignUpForm from "@/widgets/register/SignUpForm";
@@ -8,6 +9,7 @@ import { StyleSheet, View } from "react-native";
 
 const SignUp = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   return (
     <View style={styles.mainContainer}>
       <View style={styles.backgroundIconContainer}>
@@ -15,14 +17,14 @@ const SignUp = () => {
       </View>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
-          <ThemedText type="title">Sign Up</ThemedText>
+          <ThemedText type="title">{t("auth.register")}</ThemedText>
         </View>
         <SignUpForm />
       </View>
       <View style={styles.innerContainer}>
         <AuthPrompt
-          promptText="Already have an account?"
-          actionText="Login"
+          promptText={t("auth.haveAccount")}
+          actionText={t("auth.signInPrompt")}
           onPressAction={() => router.navigate("/(auth)/login")}
         />
       </View>

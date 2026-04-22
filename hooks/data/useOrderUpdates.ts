@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useWebSocket } from "../websocket/useWebSocket";
 
-const WS_URL = "http://172.18.125.195:3000";
+const WS_URL = "http://10.39.10.195:3000";
 
 export const useOrderUpdates = (
   accessToken: string,

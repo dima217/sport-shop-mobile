@@ -8,6 +8,7 @@ export interface Category {
 }
 
 export interface CategoriesQueryParams {
+  lang?: string;
   limit?: number;
   offset?: number;
 }

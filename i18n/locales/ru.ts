@@ -31,6 +31,15 @@ export const ru = {
     haveAccount: "Уже есть аккаунт?",
     signUpPrompt: "Зарегистрироваться",
     signInPrompt: "Войти",
+    loginFailed: "Ошибка входа!",
+    emailRequired: "Email обязателен",
+    emailInvalid: "Неверный формат Email",
+    passwordRequired: "Пароль обязателен",
+    passwordMinLength: "Пароль должен содержать минимум 6 символов",
+    firstNameRequired: "Имя обязательно",
+    lastNameRequired: "Фамилия обязательна",
+    unexpectedError: "Произошла непредвиденная ошибка.",
+    networkError: "Ошибка сети. Проверьте подключение.",
   },
 
   // Tabs
@@ -49,6 +58,8 @@ export const ru = {
     popularProducts: "Популярные товары",
     noProducts: "Товары не найдены",
     errorLoading: "Ошибка загрузки товаров",
+    promoTitle: "Скидки до 50%",
+    promoSubtitle: "На всю коллекцию спортивной одежды",
   },
 
   // Products
@@ -74,6 +85,9 @@ export const ru = {
     sortByPrice: "По цене",
     sortByRating: "По рейтингу",
     sortInStock: "В наличии",
+    errorLoadingProduct: "Ошибка загрузки товара",
+    backLink: "Вернуться назад",
+    searchPrefix: "Поиск: ",
     errors: {
       sizeRequired: "Пожалуйста, выберите размер",
       colorRequired: "Пожалуйста, выберите цвет",
@@ -98,6 +112,8 @@ export const ru = {
     errorLoading: "Ошибка загрузки корзины",
     remove: "Удалить",
     quantity: "Количество",
+    item: "Товар",
+    size: "Размер",
   },
 
   // Favorites
@@ -113,6 +129,7 @@ export const ru = {
     title: "Профиль",
     editProfile: "Редактирование профиля",
     myOrders: "Мои заказы",
+    favorites: "Избранное",
     addresses: "Адреса доставки",
     settings: "Настройки",
     help: "Помощь и поддержка",
@@ -124,6 +141,12 @@ export const ru = {
     noOrdersSubtext: "Сделайте первый заказ и он появится здесь",
     errorLoadingOrders: "Ошибка загрузки заказов",
     errorLoadingProfile: "Ошибка загрузки профиля",
+    user: "Пользователь",
+    firstName: "Имя",
+    firstNamePlaceholder: "Введите имя",
+    lastName: "Фамилия",
+    lastNamePlaceholder: "Введите фамилию",
+    email: "Email",
   },
 
   // Orders
@@ -161,10 +184,22 @@ export const ru = {
     noAddressesSubtext: "Добавьте адрес для быстрой доставки",
     default: "По умолчанию",
     setDefault: "Установить по умолчанию",
+    unsetDefault: "Отменить по умолчанию",
     street: "Улица",
     city: "Город",
     postalCode: "Почтовый индекс",
     country: "Страна",
+    streetPlaceholder: "ул. Ленина, д. 10, кв. 25",
+    cityPlaceholder: "Москва",
+    postalCodePlaceholder: "123456",
+    countryPlaceholder: "Россия",
+    errorLoading: "Не удалось загрузить адреса",
+    errorSaving: "Не удалось сохранить адрес",
+    errorDeleting: "Не удалось удалить адрес",
+    errorSettingDefault: "Не удалось установить адрес по умолчанию",
+    errorRemovingDefault: "Не удалось отменить адрес по умолчанию",
+    deleteConfirmTitle: "Удалить адрес",
+    deleteConfirmMessage: "Вы уверены, что хотите удалить этот адрес?",
   },
 
   // About
@@ -221,6 +256,60 @@ export const ru = {
       title: "Ошибка",
       message: "Не удалось оформить заказ. Попробуйте еще раз.",
     },
+  },
+
+  // Support
+  support: {
+    createTicket: "Создать обращение",
+    ticketTitle: "Обращение",
+    myTickets: "Мои обращения",
+    subject: "Тема обращения",
+    subjectPlaceholder: "Проблема с заказом #12345",
+    message: "Сообщение",
+    messagePlaceholder: "Опишите вашу проблему или вопрос подробно...",
+    describe: "Опишите вашу проблему или вопрос",
+    hint: "Чем подробнее вы опишете проблему, тем быстрее мы сможем вам помочь",
+    submitTicket: "Отправить обращение",
+    successTitle: "Успешно",
+    successMessage: "Ваше обращение создано. Мы ответим вам в ближайшее время.",
+    errorCreating: "Не удалось создать обращение. Попробуйте позже.",
+    errorLoading: "Ошибка загрузки обращения",
+    errorLoadingList: "Ошибка загрузки обращений",
+    retry: "Повторить",
+    hasResponse: "Есть ответ",
+    empty: "У вас нет обращений",
+    emptySubtext: "Создайте новое обращение, если у вас есть вопросы или проблемы",
+    ticketSubject: "Тема",
+    ticketMessage: "Ваше сообщение",
+    createdAt: "Создано: ",
+    adminResponse: "Ответ администратора",
+    updatedAt: "Обновлено: ",
+    waitingResponse: "Ожидаем ответа администратора",
+    waitingResponseSubtext: "Мы получили ваше обращение и ответим в ближайшее время",
+    filterAll: "Все",
+    validation: {
+      subjectRequired: "Тема обязательна",
+      subjectMin: "Тема должна содержать минимум 5 символов",
+      subjectMax: "Тема не должна превышать 255 символов",
+      messageRequired: "Сообщение обязательно",
+      messageMin: "Сообщение должно содержать минимум 10 символов",
+      messageMax: "Сообщение не должно превышать 5000 символов",
+    },
+    status: {
+      open: "Открыт",
+      inProgress: "В работе",
+      resolved: "Решен",
+      closed: "Закрыт",
+    },
+  },
+
+  // Network
+  network: {
+    airplaneMode: "Режим полёта включён",
+    noInternet: "Нет подключения к интернету",
+    disableAirplane: "Отключите режим полёта для восстановления связи",
+    checkConnection: "Проверьте подключение и повторите попытку",
+    tryAgain: "Повторить",
   },
 
   // Reviews

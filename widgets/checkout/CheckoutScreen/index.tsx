@@ -28,7 +28,7 @@ export const CheckoutScreen = () => {
     street: "",
     city: "",
     postalCode: "",
-    country: "Россия",
+    country: t("checkout.placeholders.country"),
     paymentMethod: "card" as "card" | "cash",
     comment: "",
   });

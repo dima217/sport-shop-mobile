@@ -31,6 +31,15 @@ export const en = {
     haveAccount: "Already have an account?",
     signUpPrompt: "Sign Up",
     signInPrompt: "Sign In",
+    loginFailed: "Login failed!",
+    emailRequired: "Email is required",
+    emailInvalid: "Email is not valid",
+    passwordRequired: "Password is required",
+    passwordMinLength: "Password must be at least 6 characters",
+    firstNameRequired: "First Name is required",
+    lastNameRequired: "Last Name is required",
+    unexpectedError: "An unexpected error occurred.",
+    networkError: "Network Error. Check your connection.",
   },
 
   // Tabs
@@ -49,6 +58,8 @@ export const en = {
     popularProducts: "Popular Products",
     noProducts: "No products found",
     errorLoading: "Error loading products",
+    promoTitle: "Discounts up to 50%",
+    promoSubtitle: "On the entire sportswear collection",
   },
 
   // Products
@@ -74,6 +85,9 @@ export const en = {
     sortByPrice: "By Price",
     sortByRating: "By Rating",
     sortInStock: "In Stock",
+    errorLoadingProduct: "Error loading product",
+    backLink: "Go back",
+    searchPrefix: "Search: ",
     errors: {
       sizeRequired: "Please select a size",
       colorRequired: "Please select a color",
@@ -98,6 +112,8 @@ export const en = {
     errorLoading: "Error loading cart",
     remove: "Remove",
     quantity: "Quantity",
+    item: "Product",
+    size: "Size",
   },
 
   // Favorites
@@ -113,6 +129,7 @@ export const en = {
     title: "Profile",
     editProfile: "Edit Profile",
     myOrders: "My Orders",
+    favorites: "Favorites",
     addresses: "Delivery Addresses",
     settings: "Settings",
     help: "Help & Support",
@@ -124,6 +141,12 @@ export const en = {
     noOrdersSubtext: "Make your first order and it will appear here",
     errorLoadingOrders: "Error loading orders",
     errorLoadingProfile: "Error loading profile",
+    user: "User",
+    firstName: "First Name",
+    firstNamePlaceholder: "Enter first name",
+    lastName: "Last Name",
+    lastNamePlaceholder: "Enter last name",
+    email: "Email",
   },
 
   // Orders
@@ -161,10 +184,22 @@ export const en = {
     noAddressesSubtext: "Add an address for quick delivery",
     default: "Default",
     setDefault: "Set as Default",
+    unsetDefault: "Unset as Default",
     street: "Street",
     city: "City",
     postalCode: "Postal Code",
     country: "Country",
+    streetPlaceholder: "123 Main St, Apt 4",
+    cityPlaceholder: "Moscow",
+    postalCodePlaceholder: "123456",
+    countryPlaceholder: "Russia",
+    errorLoading: "Failed to load addresses",
+    errorSaving: "Failed to save address",
+    errorDeleting: "Failed to delete address",
+    errorSettingDefault: "Failed to set default address",
+    errorRemovingDefault: "Failed to remove default address",
+    deleteConfirmTitle: "Delete address",
+    deleteConfirmMessage: "Are you sure you want to delete this address?",
   },
 
   // About
@@ -221,6 +256,60 @@ export const en = {
       title: "Error",
       message: "Failed to place order. Please try again.",
     },
+  },
+
+  // Support
+  support: {
+    createTicket: "Create Ticket",
+    ticketTitle: "Ticket",
+    myTickets: "My Tickets",
+    subject: "Subject",
+    subjectPlaceholder: "Issue with order #12345",
+    message: "Message",
+    messagePlaceholder: "Describe your issue or question in detail...",
+    describe: "Describe your issue or question",
+    hint: "The more details you provide, the faster we can help you",
+    submitTicket: "Submit Ticket",
+    successTitle: "Success",
+    successMessage: "Your ticket has been created. We will respond as soon as possible.",
+    errorCreating: "Failed to create ticket. Please try again later.",
+    errorLoading: "Error loading ticket",
+    errorLoadingList: "Error loading tickets",
+    retry: "Retry",
+    hasResponse: "Has response",
+    empty: "No tickets",
+    emptySubtext: "Create a new ticket if you have any questions or issues",
+    ticketSubject: "Subject",
+    ticketMessage: "Your message",
+    createdAt: "Created: ",
+    adminResponse: "Admin response",
+    updatedAt: "Updated: ",
+    waitingResponse: "Waiting for admin response",
+    waitingResponseSubtext: "We have received your ticket and will respond as soon as possible",
+    filterAll: "All",
+    validation: {
+      subjectRequired: "Subject is required",
+      subjectMin: "Subject must be at least 5 characters",
+      subjectMax: "Subject must not exceed 255 characters",
+      messageRequired: "Message is required",
+      messageMin: "Message must be at least 10 characters",
+      messageMax: "Message must not exceed 5000 characters",
+    },
+    status: {
+      open: "Open",
+      inProgress: "In Progress",
+      resolved: "Resolved",
+      closed: "Closed",
+    },
+  },
+
+  // Network
+  network: {
+    airplaneMode: "Airplane Mode Enabled",
+    noInternet: "No Internet Connection",
+    disableAirplane: "Disable airplane mode to reconnect",
+    checkConnection: "Check your connection and try again",
+    tryAgain: "Try Again",
   },
 
   // Reviews

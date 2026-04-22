@@ -42,10 +42,10 @@ export const OrderItemCard = ({ item }: OrderItemCardProps) => {
           </View>
         </View>
         <View style={styles.priceContainer}>
-          <ThemedText style={styles.price}>{totalPrice} ₽</ThemedText>
+          <ThemedText style={styles.price}>{totalPrice} Br</ThemedText>
           {item.quantity > 1 && (
             <ThemedText style={styles.unitPrice}>
-              {item.price} ₽ × {item.quantity}
+              {item.price} Br × {item.quantity}
             </ThemedText>
           )}
         </View>

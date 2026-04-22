@@ -1,5 +1,6 @@
 import { useUpdateProfileMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import Button from "@/shared/Button";
 import { Header } from "@/shared/layout/Header";
 import TextInput from "@/shared/TextInput";
@@ -13,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 export const EditProfileScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.auth.user);
 
@@ -31,16 +33,16 @@ export const EditProfileScreen = () => {
       }).unwrap();
 
       // Parse name from "firstName lastName" format
-      const nameParts = result.name.split(" ");
-      const updatedFirstName = nameParts[0] || firstName;
-      const updatedLastName = nameParts.slice(1).join(" ") || lastName;
+      //const nameParts = result.name.split(" ");
+      //const updatedFirstName = nameParts[0] || firstName;
+      //const updatedLastName = nameParts.slice(1).join(" ") || lastName;
 
       dispatch(
         setUser({
           id: result.id,
           email: result.email || profile.email,
-          firstName: updatedFirstName,
-          lastName: updatedLastName,
+          firstName: firstName,
+          lastName: lastName,
         })
       );
 
@@ -53,7 +55,7 @@ export const EditProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Редактирование профиля"
+        title={t("profile.editProfile")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -68,30 +70,30 @@ export const EditProfileScreen = () => {
       >
         <View style={styles.formSection}>
           <TextInput
-            label="Имя"
+            label={t("profile.firstName")}
             value={firstName}
             onChangeText={setFirstName}
-            placeholder="Введите имя"
+            placeholder={t("profile.firstNamePlaceholder")}
           />
 
           <TextInput
-            label="Фамилия"
+            label={t("profile.lastName")}
             value={lastName}
             onChangeText={setLastName}
-            placeholder="Введите фамилию"
+            placeholder={t("profile.lastNamePlaceholder")}
           />
 
           <TextInput
-            label="Email"
+            label={t("profile.email")}
             value={profile?.email || ""}
             editable={false}
-            placeholder="Email"
+            placeholder={t("profile.email")}
           />
         </View>
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Сохранить"
+            title={t("common.save")}
             onPress={handleSave}
             loading={isLoading}
             style={styles.saveButton}

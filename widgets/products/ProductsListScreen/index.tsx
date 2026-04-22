@@ -5,6 +5,7 @@ import {
   useRemoveFromFavoritesMutation,
 } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import { ProductWithFavorite } from "@/widgets/products/ProductCard";
@@ -28,6 +29,7 @@ export const ProductsListScreen = () => {
     search?: string;
   }>();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState(params.search || "");
   const [showFilters, setShowFilters] = useState(false);
@@ -138,10 +140,10 @@ export const ProductsListScreen = () => {
   const productsWithFavorites = accumulatedProducts;
 
   const title = params.categorySlug
-    ? "Товары"
+    ? t("products.title")
     : params.search
-    ? `Поиск: ${params.search}`
-    : "Все товары";
+    ? `${t("products.searchPrefix")}${params.search}`
+    : t("products.allProducts");
 
   // Сбрасываем страницу при изменении параметров URL
   useEffect(() => {
@@ -244,12 +246,12 @@ export const ProductsListScreen = () => {
         ) : error ? (
           <View style={styles.errorContainer}>
             <ThemedText style={styles.errorText}>
-              Ошибка загрузки товаров
+              {t("products.errorLoading")}
             </ThemedText>
           </View>
         ) : productsWithFavorites.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <ThemedText style={styles.emptyText}>Товары не найдены</ThemedText>
+            <ThemedText style={styles.emptyText}>{t("products.noProducts")}</ThemedText>
           </View>
         ) : (
           <ProductsGrid

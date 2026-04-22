@@ -1,5 +1,6 @@
 import { useCreateTicketMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
@@ -17,6 +18,7 @@ import {
 
 export const CreateTicketScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [createTicket, { isLoading }] = useCreateTicketMutation();
 
   const [formData, setFormData] = useState({
@@ -30,19 +32,19 @@ export const CreateTicketScreen = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.subject.trim()) {
-      newErrors.subject = "Тема обязательна";
+      newErrors.subject = t("support.validation.subjectRequired");
     } else if (formData.subject.trim().length < 5) {
-      newErrors.subject = "Тема должна содержать минимум 5 символов";
+      newErrors.subject = t("support.validation.subjectMin");
     } else if (formData.subject.trim().length > 255) {
-      newErrors.subject = "Тема не должна превышать 255 символов";
+      newErrors.subject = t("support.validation.subjectMax");
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Сообщение обязательно";
+      newErrors.message = t("support.validation.messageRequired");
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Сообщение должно содержать минимум 10 символов";
+      newErrors.message = t("support.validation.messageMin");
     } else if (formData.message.trim().length > 5000) {
-      newErrors.message = "Сообщение не должно превышать 5000 символов";
+      newErrors.message = t("support.validation.messageMax");
     }
 
     setErrors(newErrors);
@@ -61,11 +63,11 @@ export const CreateTicketScreen = () => {
       }).unwrap();
 
       Alert.alert(
-        "Успешно",
-        "Ваше обращение создано. Мы ответим вам в ближайшее время.",
+        t("support.successTitle"),
+        t("support.successMessage"),
         [
           {
-            text: "OK",
+            text: t("common.ok"),
             onPress: () => {
               router.replace({
                 pathname: "/profile/support/[id]",
@@ -78,9 +80,8 @@ export const CreateTicketScreen = () => {
     } catch (error: any) {
       console.error("Error creating ticket:", error);
       Alert.alert(
-        "Ошибка",
-        error?.data?.message ||
-          "Не удалось создать обращение. Попробуйте позже."
+        t("common.error"),
+        error?.data?.message || t("support.errorCreating")
       );
     }
   };
@@ -88,7 +89,7 @@ export const CreateTicketScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Создать обращение"
+        title={t("support.createTicket")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -103,11 +104,11 @@ export const CreateTicketScreen = () => {
       >
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>
-            Опишите вашу проблему или вопрос
+            {t("support.describe")}
           </ThemedText>
 
           <TextInput
-            label="Тема обращения"
+            label={t("support.subject")}
             value={formData.subject}
             onChangeText={(text) => {
               setFormData({ ...formData, subject: text });
@@ -115,13 +116,13 @@ export const CreateTicketScreen = () => {
                 setErrors({ ...errors, subject: "" });
               }
             }}
-            placeholder="Проблема с заказом #12345"
+            placeholder={t("support.subjectPlaceholder")}
             errorMessage={errors.subject}
             maxLength={250}
           />
 
           <TextInput
-            label="Сообщение"
+            label={t("support.message")}
             value={formData.message}
             onChangeText={(text) => {
               setFormData({ ...formData, message: text });
@@ -129,7 +130,7 @@ export const CreateTicketScreen = () => {
                 setErrors({ ...errors, message: "" });
               }
             }}
-            placeholder="Опишите вашу проблему или вопрос подробно..."
+            placeholder={t("support.messagePlaceholder")}
             errorMessage={errors.message}
             multiline
             numberOfLines={8}
@@ -144,15 +145,14 @@ export const CreateTicketScreen = () => {
               color={Colors.textSecondary}
             />
             <ThemedText style={styles.hintText}>
-              Чем подробнее вы опишете проблему, тем быстрее мы сможем вам
-              помочь
+              {t("support.hint")}
             </ThemedText>
           </View>
         </View>
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Отправить обращение"
+            title={t("support.submitTicket")}
             onPress={handleSubmit}
             loading={isLoading}
             style={styles.submitButton}

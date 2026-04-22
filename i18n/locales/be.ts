@@ -31,6 +31,15 @@ export const be = {
     haveAccount: "Ужо ёсць акаўнт?",
     signUpPrompt: "Зарэгістравацца",
     signInPrompt: "Увайсці",
+    loginFailed: "Памылка ўваходу!",
+    emailRequired: "Email абавязковы",
+    emailInvalid: "Няправільны фармат Email",
+    passwordRequired: "Пароль абавязковы",
+    passwordMinLength: "Пароль павінен змяшчаць мінімум 6 сімвалаў",
+    firstNameRequired: "Імя абавязкова",
+    lastNameRequired: "Прозвішча абавязкова",
+    unexpectedError: "Адбылася непрадбачаная памылка.",
+    networkError: "Памылка сеткі. Праверце падключэнне.",
   },
 
   // Tabs
@@ -49,6 +58,8 @@ export const be = {
     popularProducts: "Папулярныя тавары",
     noProducts: "Тавары не знойдзены",
     errorLoading: "Памылка загрузкі тавараў",
+    promoTitle: "Зніжкі да 50%",
+    promoSubtitle: "На ўсю калекцыю спартыўнага адзення",
   },
 
   // Products
@@ -74,6 +85,9 @@ export const be = {
     sortByPrice: "Па цане",
     sortByRating: "Па рэйтынгу",
     sortInStock: "У наяўнасці",
+    errorLoadingProduct: "Памылка загрузкі тавару",
+    backLink: "Вярнуцца назад",
+    searchPrefix: "Пошук: ",
     errors: {
       sizeRequired: "Калі ласка, выберыце памер",
       colorRequired: "Калі ласка, выберыце колер",
@@ -98,6 +112,8 @@ export const be = {
     errorLoading: "Памылка загрузкі кошыка",
     remove: "Выдаліць",
     quantity: "Колькасць",
+    item: "Тавар",
+    size: "Памер",
   },
 
   // Favorites
@@ -113,6 +129,7 @@ export const be = {
     title: "Профіль",
     editProfile: "Рэдагаванне профілю",
     myOrders: "Мае заказы",
+    favorites: "Абранае",
     addresses: "Адрасы дастаўкі",
     settings: "Налады",
     help: "Дапамога і падтрымка",
@@ -124,6 +141,12 @@ export const be = {
     noOrdersSubtext: "Зрабіце першы заказ і ён з'явіцца тут",
     errorLoadingOrders: "Памылка загрузкі заказаў",
     errorLoadingProfile: "Памылка загрузкі профілю",
+    user: "Карыстальнік",
+    firstName: "Імя",
+    firstNamePlaceholder: "Увядзіце імя",
+    lastName: "Прозвішча",
+    lastNamePlaceholder: "Увядзіце прозвішча",
+    email: "Email",
   },
 
   // Orders
@@ -161,10 +184,22 @@ export const be = {
     noAddressesSubtext: "Дадайце адрас для хуткай дастаўкі",
     default: "Па змаўчанні",
     setDefault: "Усталяваць па змаўчанні",
+    unsetDefault: "Скасаваць па змаўчанні",
     street: "Вуліца",
     city: "Горад",
     postalCode: "Паштовы індэкс",
     country: "Краіна",
+    streetPlaceholder: "вул. Леніна, д. 10, кв. 25",
+    cityPlaceholder: "Мінск",
+    postalCodePlaceholder: "220000",
+    countryPlaceholder: "Беларусь",
+    errorLoading: "Не атрымалася загрузіць адрасы",
+    errorSaving: "Не атрымалася захаваць адрас",
+    errorDeleting: "Не атрымалася выдаліць адрас",
+    errorSettingDefault: "Не атрымалася ўсталяваць адрас па змаўчанні",
+    errorRemovingDefault: "Не атрымалася скасаваць адрас па змаўчанні",
+    deleteConfirmTitle: "Выдаліць адрас",
+    deleteConfirmMessage: "Вы ўпэўнены, што хочаце выдаліць гэты адрас?",
   },
 
   // About
@@ -221,6 +256,60 @@ export const be = {
       title: "Памылка",
       message: "Не атрымалася аформіць заказ. Паспрабуйце яшчэ раз.",
     },
+  },
+
+  // Support
+  support: {
+    createTicket: "Стварыць зварот",
+    ticketTitle: "Зварот",
+    myTickets: "Мае звароты",
+    subject: "Тэма звароту",
+    subjectPlaceholder: "Праблема з заказам #12345",
+    message: "Паведамленне",
+    messagePlaceholder: "Апішыце вашу праблему або пытанне падрабязна...",
+    describe: "Апішыце вашу праблему або пытанне",
+    hint: "Чым падрабязней вы апішаце праблему, тым хутчэй мы зможам вам дапамагчы",
+    submitTicket: "Адправіць зварот",
+    successTitle: "Паспяхова",
+    successMessage: "Ваш зварот створаны. Мы адкажам вам у бліжэйшы час.",
+    errorCreating: "Не атрымалася стварыць зварот. Паспрабуйце пазней.",
+    errorLoading: "Памылка загрузкі звароту",
+    errorLoadingList: "Памылка загрузкі зваротаў",
+    retry: "Паўтарыць",
+    hasResponse: "Ёсць адказ",
+    empty: "У вас няма зваротаў",
+    emptySubtext: "Стварыце новы зварот, калі ў вас ёсць пытанні або праблемы",
+    ticketSubject: "Тэма",
+    ticketMessage: "Ваша паведамленне",
+    createdAt: "Створана: ",
+    adminResponse: "Адказ адміністратара",
+    updatedAt: "Абноўлена: ",
+    waitingResponse: "Чакаем адказу адміністратара",
+    waitingResponseSubtext: "Мы атрымалі ваш зварот і адкажам у бліжэйшы час",
+    filterAll: "Усе",
+    validation: {
+      subjectRequired: "Тэма абавязковая",
+      subjectMin: "Тэма павінна змяшчаць мінімум 5 сімвалаў",
+      subjectMax: "Тэма не павінна перавышаць 255 сімвалаў",
+      messageRequired: "Паведамленне абавязкова",
+      messageMin: "Паведамленне павінна змяшчаць мінімум 10 сімвалаў",
+      messageMax: "Паведамленне не павінна перавышаць 5000 сімвалаў",
+    },
+    status: {
+      open: "Адчынены",
+      inProgress: "У рабоце",
+      resolved: "Вырашаны",
+      closed: "Зачынены",
+    },
+  },
+
+  // Network
+  network: {
+    airplaneMode: "Рэжым палёту ўключаны",
+    noInternet: "Няма падключэння да інтэрнэту",
+    disableAirplane: "Адключыце рэжым палёту для аднаўлення сувязі",
+    checkConnection: "Праверце падключэнне і паўтарыце спробу",
+    tryAgain: "Паўтарыць",
   },
 
   // Reviews

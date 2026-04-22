@@ -1,10 +1,11 @@
 import { useGetTicketQuery } from "@/api";
+import { Ticket } from "@/api/types/support";
 import { Colors } from "@/constants/design-tokens";
 import { useSupportUpdates } from "@/hooks/data/useSupportUpdates";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import { RootState } from "@/store/store";
-import { Ticket } from "@/api/types/support";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback } from "react";
@@ -32,23 +33,28 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusText = (status: string): string => {
-  switch (status) {
-    case "open":
-      return "Открыт";
-    case "in_progress":
-      return "В работе";
-    case "resolved":
-      return "Решен";
-    case "closed":
-      return "Закрыт";
-    default:
-      return status;
-  }
+const useStatusText = () => {
+  const { t } = useTranslation();
+  return (status: string): string => {
+    switch (status) {
+      case "open":
+        return t("support.status.open");
+      case "in_progress":
+        return t("support.status.inProgress");
+      case "resolved":
+        return t("support.status.resolved");
+      case "closed":
+        return t("support.status.closed");
+      default:
+        return status;
+    }
+  };
 };
 
 export const TicketDetailsScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
+  const getStatusText = useStatusText();
   const { id } = useLocalSearchParams<{ id: string }>();
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const ticketId = parseInt(id || "0", 10);
@@ -77,7 +83,7 @@ export const TicketDetailsScreen = () => {
     return (
       <View style={styles.container}>
         <Header
-          title="Обращение"
+          title={t("support.ticketTitle")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -95,7 +101,7 @@ export const TicketDetailsScreen = () => {
     return (
       <View style={styles.container}>
         <Header
-          title="Обращение"
+          title={t("support.ticketTitle")}
           left={
             <TouchableOpacity onPress={() => router.back()}>
               <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -104,13 +110,13 @@ export const TicketDetailsScreen = () => {
         />
         <View style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>
-            Ошибка загрузки обращения
+            {t("support.errorLoading")}
           </ThemedText>
           <TouchableOpacity
             style={styles.retryButton}
             onPress={() => refetch()}
           >
-            <ThemedText style={styles.retryButtonText}>Повторить</ThemedText>
+            <ThemedText style={styles.retryButtonText}>{t("support.retry")}</ThemedText>
           </TouchableOpacity>
         </View>
       </View>
@@ -137,7 +143,7 @@ export const TicketDetailsScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title={`Обращение #${ticket.id}`}
+        title={`${t("support.ticketTitle")} #${ticket.id}`}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -161,15 +167,15 @@ export const TicketDetailsScreen = () => {
 
         {/* Ticket Info */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Тема</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("support.ticketSubject")}</ThemedText>
           <ThemedText style={styles.sectionContent}>{ticket.subject}</ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Ваше сообщение</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("support.ticketMessage")}</ThemedText>
           <ThemedText style={styles.sectionContent}>{ticket.message}</ThemedText>
           <ThemedText style={styles.sectionDate}>
-            Создано: {createdDate}
+            {t("support.createdAt")}{createdDate}
           </ThemedText>
         </View>
 
@@ -177,14 +183,14 @@ export const TicketDetailsScreen = () => {
         {ticket.adminResponse ? (
           <View style={styles.responseSection}>
             <View style={styles.responseHeader}>
-              <FontAwesome name="user-shield" size={20} color={Colors.primary} />
-              <ThemedText style={styles.responseTitle}>Ответ администратора</ThemedText>
+              <FontAwesome name="headphones" size={20} color={Colors.primary} />
+              <ThemedText style={styles.responseTitle}>{t("support.adminResponse")}</ThemedText>
             </View>
             <ThemedText style={styles.responseContent}>
               {ticket.adminResponse}
             </ThemedText>
             <ThemedText style={styles.sectionDate}>
-              Обновлено: {updatedDate}
+              {t("support.updatedAt")}{updatedDate}
             </ThemedText>
           </View>
         ) : (
@@ -195,10 +201,10 @@ export const TicketDetailsScreen = () => {
               color={Colors.textSecondary}
             />
             <ThemedText style={styles.noResponseText}>
-              Ожидаем ответа администратора
+              {t("support.waitingResponse")}
             </ThemedText>
             <ThemedText style={styles.noResponseSubtext}>
-              Мы получили ваше обращение и ответим в ближайшее время
+              {t("support.waitingResponseSubtext")}
             </ThemedText>
           </View>
         )}

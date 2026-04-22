@@ -10,9 +10,9 @@ interface ProductPriceProps {
 export const ProductPrice = ({ price, oldPrice }: ProductPriceProps) => {
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.price}>{price} ₽</ThemedText>
+      <ThemedText style={styles.price}>{price} Br</ThemedText>
       {oldPrice ? (
-        <ThemedText style={styles.oldPrice}>{oldPrice} ₽</ThemedText>
+        <ThemedText style={styles.oldPrice}>{oldPrice} Br</ThemedText>
       ) : null}
     </View>
   );

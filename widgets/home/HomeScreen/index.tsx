@@ -1,5 +1,6 @@
 import {
   useAddToFavoritesMutation,
+  useGetBannerQuery,
   useGetFavoritesQuery,
   useGetProductsQuery,
   useRemoveFromFavoritesMutation,
@@ -40,6 +41,15 @@ export const HomeScreen = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const currentLanguage = useSelector(
+    (state: RootState) => state.language.currentLanguage
+  );
+  useEffect(() => {
+    setPage(0);
+    setAccumulatedProducts([]);
+  }, [currentLanguage]);
+
+  const { data: bannerData } = useGetBannerQuery();
 
   const {
     data: productsData,
@@ -229,10 +239,9 @@ export const HomeScreen = () => {
             <View>
               <View style={styles.promoContainer}>
                 <PromoBanner
-                  title="Скидки до 50%"
-                  subtitle="На всю коллекцию спортивной одежды"
+                  title={bannerData?.title ?? t("home.promoTitle")}
+                  subtitle={bannerData?.subtitle ?? t("home.promoSubtitle")}
                   image="https://via.placeholder.com/400x200"
-                  onPress={() => console.log("Promo pressed")}
                 />
               </View>
               <View style={styles.sectionHeader}>

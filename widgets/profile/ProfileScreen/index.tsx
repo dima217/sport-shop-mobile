@@ -1,5 +1,6 @@
 import { useGetOrdersQuery, useSignOutMutation } from "@/api";
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header } from "@/shared/layout/Header";
 import { clearAuth } from "@/store/slices/authSlice";
@@ -27,6 +28,7 @@ interface ProfileOption {
 export const ProfileScreen = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const profile = useSelector((state: RootState) => state.auth.user);
   const [signOut] = useSignOutMutation();
@@ -45,7 +47,7 @@ export const ProfileScreen = () => {
   const options: ProfileOption[] = [
     {
       id: "orders",
-      title: "Мои заказы",
+      title: t("profile.myOrders"),
       icon: "shopping-bag",
       onPress: () => {
         router.push("/profile/orders");
@@ -55,7 +57,7 @@ export const ProfileScreen = () => {
     },
     {
       id: "favorites",
-      title: "Избранное",
+      title: t("profile.favorites"),
       icon: "heart",
       onPress: () => {
         router.push("/(tabs)/favorites");
@@ -63,7 +65,7 @@ export const ProfileScreen = () => {
     },
     {
       id: "addresses",
-      title: "Адреса доставки",
+      title: t("profile.addresses"),
       icon: "map-marker",
       onPress: () => {
         router.push("/profile/addresses");
@@ -71,7 +73,7 @@ export const ProfileScreen = () => {
     },
     {
       id: "settings",
-      title: "Настройки",
+      title: t("profile.settings"),
       icon: "cog",
       onPress: () => {
         router.push("/profile/settings");
@@ -79,7 +81,7 @@ export const ProfileScreen = () => {
     },
     {
       id: "help",
-      title: "Помощь и поддержка",
+      title: t("profile.help"),
       icon: "question-circle",
       onPress: () => {
         router.push("/profile/support");
@@ -87,7 +89,7 @@ export const ProfileScreen = () => {
     },
     {
       id: "about",
-      title: "О приложении",
+      title: t("profile.about"),
       icon: "info-circle",
       onPress: () => {
         router.push("/profile/about");
@@ -128,7 +130,7 @@ export const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Профиль" />
+      <Header title={t("profile.title")} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -141,7 +143,7 @@ export const ProfileScreen = () => {
               <ThemedText style={styles.avatarText}>
                 {profile?.firstName?.[0]?.toUpperCase() ||
                   profile?.email?.[0]?.toUpperCase() ||
-                  "U"}
+                  t("profile.user")[0]?.toUpperCase()}
               </ThemedText>
             </View>
           </View>
@@ -149,7 +151,7 @@ export const ProfileScreen = () => {
             <ThemedText style={styles.profileName}>
               {profile?.firstName && profile?.lastName
                 ? `${profile.firstName} ${profile.lastName}`
-                : profile?.email || "Пользователь"}
+                : profile?.email || t("profile.user")}
             </ThemedText>
             {profile?.email && (
               <ThemedText style={styles.profileEmail}>
@@ -186,7 +188,7 @@ export const ProfileScreen = () => {
             activeOpacity={0.7}
           >
             <FontAwesome name="sign-out" size={18} color={Colors.REJECT} />
-            <ThemedText style={styles.signOutText}>Выйти</ThemedText>
+            <ThemedText style={styles.signOutText}>{t("profile.logout")}</ThemedText>
           </TouchableOpacity>
         </View>
       </ScrollView>

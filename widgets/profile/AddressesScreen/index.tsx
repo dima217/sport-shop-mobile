@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Address, addressStorage } from "@/services/addressStorage";
 import Button from "@/shared/Button";
 import { ThemedText } from "@/shared/core/ThemedText";
@@ -18,6 +19,7 @@ import {
 
 export const AddressesScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -26,7 +28,7 @@ export const AddressesScreen = () => {
     street: "",
     city: "",
     postalCode: "",
-    country: "Россия",
+    country: t("addresses.countryPlaceholder"),
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -41,7 +43,7 @@ export const AddressesScreen = () => {
       setAddresses(loadedAddresses);
     } catch (error) {
       console.error("Error loading addresses:", error);
-      Alert.alert("Ошибка", "Не удалось загрузить адреса");
+      Alert.alert(t("common.error"), t("addresses.errorLoading"));
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +55,7 @@ export const AddressesScreen = () => {
       street: "",
       city: "",
       postalCode: "",
-      country: "Россия",
+      country: t("addresses.countryPlaceholder"),
     });
     setFormErrors({});
     setShowForm(true);
@@ -74,16 +76,16 @@ export const AddressesScreen = () => {
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
     if (!formData.street.trim()) {
-      errors.street = "Улица обязательна";
+      errors.street = t("checkout.errors.streetRequired");
     }
     if (!formData.city.trim()) {
-      errors.city = "Город обязателен";
+      errors.city = t("checkout.errors.cityRequired");
     }
     if (!formData.postalCode.trim()) {
-      errors.postalCode = "Почтовый индекс обязателен";
+      errors.postalCode = t("checkout.errors.postalCodeRequired");
     }
     if (!formData.country.trim()) {
-      errors.country = "Страна обязательна";
+      errors.country = t("checkout.errors.countryRequired");
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -103,15 +105,15 @@ export const AddressesScreen = () => {
       setEditingAddress(null);
     } catch (error) {
       console.error("Error saving address:", error);
-      Alert.alert("Ошибка", "Не удалось сохранить адрес");
+      Alert.alert(t("common.error"), t("addresses.errorSaving"));
     }
   };
 
   const handleDeleteAddress = async (id: string) => {
-    Alert.alert("Удалить адрес", "Вы уверены, что хотите удалить этот адрес?", [
-      { text: "Отмена", style: "cancel" },
+    Alert.alert(t("addresses.deleteConfirmTitle"), t("addresses.deleteConfirmMessage"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Удалить",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           try {
@@ -119,7 +121,7 @@ export const AddressesScreen = () => {
             await loadAddresses();
           } catch (error) {
             console.error("Error deleting address:", error);
-            Alert.alert("Ошибка", "Не удалось удалить адрес");
+            Alert.alert(t("common.error"), t("addresses.errorDeleting"));
           }
         },
       },
@@ -132,7 +134,7 @@ export const AddressesScreen = () => {
       await loadAddresses();
     } catch (error) {
       console.error("Error setting default address:", error);
-      Alert.alert("Ошибка", "Не удалось установить адрес по умолчанию");
+      Alert.alert(t("common.error"), t("addresses.errorSettingDefault"));
     }
   };
 
@@ -142,7 +144,7 @@ export const AddressesScreen = () => {
       await loadAddresses();
     } catch (error) {
       console.error("Error removing default address:", error);
-      Alert.alert("Ошибка", "Не удалось отменить адрес по умолчанию");
+      Alert.alert(t("common.error"), t("addresses.errorRemovingDefault"));
     }
   };
 
@@ -153,7 +155,7 @@ export const AddressesScreen = () => {
           {item.isDefault && (
             <View style={styles.defaultBadge}>
               <ThemedText style={styles.defaultBadgeText}>
-                По умолчанию
+                {t("addresses.default")}
               </ThemedText>
             </View>
           )}
@@ -187,7 +189,7 @@ export const AddressesScreen = () => {
         }
       >
         <ThemedText style={styles.setDefaultText}>
-          {item.isDefault ? "Отменить по умолчанию" : "Установить по умолчанию"}
+          {item.isDefault ? t("addresses.unsetDefault") : t("addresses.setDefault")}
         </ThemedText>
       </TouchableOpacity>
     </View>
@@ -196,7 +198,7 @@ export const AddressesScreen = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Адреса доставки"
+        title={t("addresses.title")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -206,15 +208,15 @@ export const AddressesScreen = () => {
 
       {isLoading ? (
         <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>Загрузка...</ThemedText>
+          <ThemedText style={styles.emptyText}>{t("common.loading")}</ThemedText>
         </View>
       ) : addresses.length === 0 ? (
         <View style={styles.emptyContainer}>
           <ThemedText style={styles.emptyText}>
-            У вас нет сохраненных адресов
+            {t("addresses.noAddresses")}
           </ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            Добавьте адрес для быстрой доставки
+            {t("addresses.noAddressesSubtext")}
           </ThemedText>
         </View>
       ) : (
@@ -229,7 +231,7 @@ export const AddressesScreen = () => {
 
       <View style={styles.footer}>
         <Button
-          title="Добавить адрес"
+          title={t("addresses.addAddress")}
           onPress={handleAddAddress}
           style={styles.addButton}
         />
@@ -243,7 +245,7 @@ export const AddressesScreen = () => {
       >
         <View style={styles.modalContainer}>
           <Header
-            title={editingAddress ? "Редактировать адрес" : "Добавить адрес"}
+            title={editingAddress ? t("addresses.editAddress") : t("addresses.addAddress")}
             left={
               <TouchableOpacity onPress={() => setShowForm(false)}>
                 <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -253,7 +255,7 @@ export const AddressesScreen = () => {
 
           <View style={styles.formContainer}>
             <TextInput
-              label="Улица"
+              label={t("addresses.street")}
               value={formData.street}
               onChangeText={(text) => {
                 setFormData({ ...formData, street: text });
@@ -261,12 +263,12 @@ export const AddressesScreen = () => {
                   setFormErrors({ ...formErrors, street: "" });
                 }
               }}
-              placeholder="ул. Ленина, д. 10, кв. 25"
+              placeholder={t("addresses.streetPlaceholder")}
               errorMessage={formErrors.street}
             />
 
             <TextInput
-              label="Город"
+              label={t("addresses.city")}
               value={formData.city}
               onChangeText={(text) => {
                 setFormData({ ...formData, city: text });
@@ -274,12 +276,12 @@ export const AddressesScreen = () => {
                   setFormErrors({ ...formErrors, city: "" });
                 }
               }}
-              placeholder="Москва"
+              placeholder={t("addresses.cityPlaceholder")}
               errorMessage={formErrors.city}
             />
 
             <TextInput
-              label="Почтовый индекс"
+              label={t("addresses.postalCode")}
               value={formData.postalCode}
               onChangeText={(text) => {
                 setFormData({ ...formData, postalCode: text });
@@ -287,12 +289,12 @@ export const AddressesScreen = () => {
                   setFormErrors({ ...formErrors, postalCode: "" });
                 }
               }}
-              placeholder="123456"
+              placeholder={t("addresses.postalCodePlaceholder")}
               errorMessage={formErrors.postalCode}
             />
 
             <TextInput
-              label="Страна"
+              label={t("addresses.country")}
               value={formData.country}
               onChangeText={(text) => {
                 setFormData({ ...formData, country: text });
@@ -300,18 +302,18 @@ export const AddressesScreen = () => {
                   setFormErrors({ ...formErrors, country: "" });
                 }
               }}
-              placeholder="Россия"
+              placeholder={t("addresses.countryPlaceholder")}
               errorMessage={formErrors.country}
             />
 
             <View style={styles.formButtons}>
               <Button
-                title={editingAddress ? "Сохранить" : "Добавить"}
+                title={editingAddress ? t("common.save") : t("common.add")}
                 onPress={handleSaveAddress}
                 style={styles.saveButton}
               />
               <Button
-                title="Отмена"
+                title={t("common.cancel")}
                 onPress={() => setShowForm(false)}
                 buttonColor={Colors.backgroundSecondary}
                 textColor={Colors.text}

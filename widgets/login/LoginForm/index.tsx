@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { useDispatch } from "react-redux";
 
+import { useTranslation } from "@/hooks/useTranslation";
 import Button from "../../../shared/Button";
 import EmailInput from "../../../shared/EmailInput";
 import PasswordInput from "../../../shared/PasswordInput";
@@ -26,6 +27,7 @@ const LoginForm = () => {
   });
 
   const router = useRouter();
+  const { t } = useTranslation();
   const [signIn, { isLoading }] = useSignInMutation();
   const dispatch = useDispatch();
   const [apiError, setApiError] = useState<string | null>(null);
@@ -57,7 +59,7 @@ const LoginForm = () => {
 
       router.replace("/(tabs)/home");
     } catch (error: any) {
-      let errorMessage = "Login failed!";
+      let errorMessage = t("auth.loginFailed");
 
       if (error?.data?.message) {
         errorMessage = error.data.message;
@@ -74,10 +76,10 @@ const LoginForm = () => {
         control={control}
         name="email"
         rules={{
-          required: "Email is required",
+          required: t("auth.emailRequired"),
           pattern: {
             value: /^\S+@\S+\.\S+$/,
-            message: "Email is not valid",
+            message: t("auth.emailInvalid"),
           },
         }}
         render={({ field: { value, onChange }, fieldState }) => (
@@ -93,10 +95,10 @@ const LoginForm = () => {
         control={control}
         name="password"
         rules={{
-          required: "Password is required",
+          required: t("auth.passwordRequired"),
           minLength: {
             value: 6,
-            message: "Password must be at least 6 characters",
+            message: t("auth.passwordMinLength"),
           },
         }}
         render={({ field: { value, onChange }, fieldState }) => (
@@ -115,7 +117,7 @@ const LoginForm = () => {
       )}
 
       <Button
-        title="Login"
+        title={t("auth.signIn")}
         loading={isLoading}
         style={styles.button}
         onPress={handleSubmit(onSubmit)}

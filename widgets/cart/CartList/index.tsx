@@ -85,7 +85,7 @@ export const CartList = () => {
               <ThemedText style={styles.totalLabel}>
                 {t("cart.total")}:
               </ThemedText>
-              <ThemedText style={styles.totalPrice}>{total} ₽</ThemedText>
+              <ThemedText style={styles.totalPrice}>{total} Br</ThemedText>
             </View>
             <Button
               title={t("cart.checkout")}

@@ -22,7 +22,7 @@ export const OrderSummary = ({ total, createdAt }: OrderSummaryProps) => {
     <View style={styles.container}>
       <View style={styles.totalRow}>
         <ThemedText style={styles.totalLabel}>{t("orders.total")}</ThemedText>
-        <ThemedText style={styles.totalAmount}>{total} ₽</ThemedText>
+        <ThemedText style={styles.totalAmount}>{total} Br</ThemedText>
       </View>
       <View style={styles.divider} />
       <ThemedText style={styles.dateText}>

@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -19,6 +20,8 @@ export const FilterChips = ({
   onSortByRating,
   onToggleInStock,
 }: FilterChipsProps) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -32,7 +35,7 @@ export const FilterChips = ({
               sortBy === "price" && styles.chipTextActive,
             ]}
           >
-            По цене
+            {t("products.sortByPrice")}
             {sortBy === "price" ? (sortOrder === "asc" ? " ↑" : " ↓") : ""}
           </ThemedText>
         </TouchableOpacity>
@@ -46,7 +49,7 @@ export const FilterChips = ({
               sortBy === "rating" && styles.chipTextActive,
             ]}
           >
-            По рейтингу
+            {t("products.sortByRating")}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
@@ -56,7 +59,7 @@ export const FilterChips = ({
           <ThemedText
             style={[styles.chipText, inStock === true && styles.chipTextActive]}
           >
-            В наличии
+            {t("products.sortInStock")}
           </ThemedText>
         </TouchableOpacity>
       </View>

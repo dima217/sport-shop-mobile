@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import { Header, HEADER_HEIGHT } from "@/shared/layout/Header";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -8,6 +9,7 @@ import { useRouter } from "expo-router";
 
 export const ProductDetailsError = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const headerTotalHeight = HEADER_HEIGHT + insets.top;
 
@@ -28,10 +30,10 @@ export const ProductDetailsError = () => {
         ]}
       >
         <ThemedText style={styles.errorText}>
-          Ошибка загрузки товара
+          {t("products.errorLoadingProduct")}
         </ThemedText>
         <TouchableOpacity onPress={() => router.back()}>
-          <ThemedText style={styles.backLink}>Вернуться назад</ThemedText>
+          <ThemedText style={styles.backLink}>{t("products.backLink")}</ThemedText>
         </TouchableOpacity>
       </View>
     </View>

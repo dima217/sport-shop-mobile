@@ -67,11 +67,9 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
           {product.name}
         </ThemedText>
         <View style={styles.priceContainer}>
-          <ThemedText style={styles.price}>{product.price} ₽</ThemedText>
+          <ThemedText style={styles.price}>{product.price} Br</ThemedText>
           {product.oldPrice && (
-            <ThemedText style={styles.oldPrice}>
-              {product.oldPrice} ₽
-            </ThemedText>
+            <ThemedText style={styles.oldPrice}>{product.oldPrice} Br</ThemedText>
           )}
         </View>
         {product.rating !== null &&

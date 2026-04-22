@@ -1,4 +1,5 @@
 import { useSignUpMutation } from "@/api";
+import { useTranslation } from "@/hooks/useTranslation";
 import { secureStore } from "@/services/secureStore";
 import { setCredentials } from "@/store/slices/authSlice";
 import { useRouter } from "expo-router";
@@ -24,6 +25,7 @@ const SignUpForm = () => {
   const { handleSubmit, control } = useForm<SignUpData>();
 
   const router = useRouter();
+  const { t } = useTranslation();
   const [signUp, { isLoading }] = useSignUpMutation();
   const dispatch = useDispatch();
   const [apiError, setApiError] = useState<string | null>(null);
@@ -52,14 +54,14 @@ const SignUpForm = () => {
 
       router.navigate("/(tabs)/home");
     } catch (error: any) {
-      let errorMessage = "An unexpected error occurred.";
+      let errorMessage = t("auth.unexpectedError");
 
       const data = error.data as { message?: string } | undefined;
 
       if (data?.message) {
         errorMessage = data.message;
       } else if (error.status === "FETCH_ERROR") {
-        errorMessage = "Network Error. Check your connection.";
+        errorMessage = t("auth.networkError");
       }
 
       setApiError(errorMessage);
@@ -78,10 +80,10 @@ const SignUpForm = () => {
         control={control}
         name="email"
         rules={{
-          required: "Email is required",
+          required: t("auth.emailRequired"),
           pattern: {
             value: /^\S+@\S+\.\S+$/,
-            message: "Email is not valid",
+            message: t("auth.emailInvalid"),
           },
         }}
         render={({ field: { value, onChange }, fieldState }) => (
@@ -89,7 +91,7 @@ const SignUpForm = () => {
             <EmailInput
               value={value}
               onChangeText={onChange}
-              placeholder="Email"
+              placeholder={t("auth.email")}
               errorMessage={fieldState.error?.message}
             />
           </>
@@ -99,10 +101,10 @@ const SignUpForm = () => {
         control={control}
         name="password"
         rules={{
-          required: "Password is required",
+          required: t("auth.passwordRequired"),
           minLength: {
             value: 6,
-            message: "Password must be at least 6 characters",
+            message: t("auth.passwordMinLength"),
           },
         }}
         render={({ field: { value, onChange }, fieldState }) => (
@@ -110,7 +112,7 @@ const SignUpForm = () => {
             <PasswordInput
               value={value}
               onChangeText={onChange}
-              placeholder="Password"
+              placeholder={t("auth.password")}
               errorMessage={fieldState.error?.message}
             />
           </>
@@ -119,14 +121,14 @@ const SignUpForm = () => {
       <Controller
         control={control}
         name="firstName"
-        rules={{ required: "First Name is required" }}
+        rules={{ required: t("auth.firstNameRequired") }}
         render={({ field: { value, onChange }, fieldState }) => (
           <>
             <TextInput
-              label="Name"
+              label={t("auth.firstName")}
               value={value}
               onChangeText={onChange}
-              placeholder="First Name"
+              placeholder={t("auth.firstName")}
               errorMessage={fieldState.error?.message}
             />
           </>
@@ -135,21 +137,21 @@ const SignUpForm = () => {
       <Controller
         control={control}
         name="lastName"
-        rules={{ required: "Last Name is required" }}
+        rules={{ required: t("auth.lastNameRequired") }}
         render={({ field: { value, onChange }, fieldState }) => (
           <>
             <TextInput
-              label="Surname"
+              label={t("auth.lastName")}
               value={value}
               onChangeText={onChange}
-              placeholder="Last Name"
+              placeholder={t("auth.lastName")}
               errorMessage={fieldState.error?.message}
             />
           </>
         )}
       />
       <Button
-        title="Register"
+        title={t("auth.signUp")}
         loading={isLoading}
         style={styles.button}
         onPress={handleSubmit(onSubmit)}

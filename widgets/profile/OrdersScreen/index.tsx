@@ -120,7 +120,7 @@ const OrderCard = ({ order, onPress }: OrderCardProps) => {
       </View>
 
       <View style={styles.orderFooter}>
-        <ThemedText style={styles.orderTotal}>{order.total} ₽</ThemedText>
+        <ThemedText style={styles.orderTotal}>{order.total} Br</ThemedText>
         <FontAwesome
           name="chevron-right"
           size={16}

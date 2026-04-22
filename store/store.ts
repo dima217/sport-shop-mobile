@@ -1,4 +1,5 @@
 import { authApi } from "@/api/authApi";
+import { bannerApi } from "@/api/bannerApi";
 import { cartApi } from "@/api/cartApi";
 import { categoriesApi } from "@/api/categoriesApi";
 import { favoritesApi } from "@/api/favoritesApi";
@@ -8,10 +9,29 @@ import { reviewsApi } from "@/api/reviewsApi";
 import { supportApi } from "@/api/supportApi";
 import { usersApi } from "@/api/usersApi";
 import authReducer from "@/store/slices/authSlice";
+import { setLanguage } from "@/store/slices/languageSlice";
 import languageReducer from "@/store/slices/languageSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import {
+  combineReducers,
+  configureStore,
+  createListenerMiddleware,
+} from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
+
+// When the user switches language, purge the cache of every API that serves
+// translatable content so RTK Query re-fetches with the new ?lang= value.
+const languageListener = createListenerMiddleware();
+
+languageListener.startListening({
+  actionCreator: setLanguage,
+  effect: (_action, listenerApi) => {
+    listenerApi.dispatch(bannerApi.util.resetApiState());
+    listenerApi.dispatch(productsApi.util.resetApiState());
+    listenerApi.dispatch(categoriesApi.util.resetApiState());
+    listenerApi.dispatch(favoritesApi.util.resetApiState());
+  },
+});
 
 const persistConfig = {
   key: "root",
@@ -23,6 +43,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   language: languageReducer,
   [authApi.reducerPath]: authApi.reducer,
+  [bannerApi.reducerPath]: bannerApi.reducer,
   [productsApi.reducerPath]: productsApi.reducer,
   [categoriesApi.reducerPath]: categoriesApi.reducer,
   [cartApi.reducerPath]: cartApi.reducer,
@@ -41,7 +62,9 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
     })
+      .prepend(languageListener.middleware)
       .concat(authApi.middleware)
+      .concat(bannerApi.middleware)
       .concat(productsApi.middleware)
       .concat(categoriesApi.middleware)
       .concat(cartApi.middleware)

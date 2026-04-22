@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -11,8 +12,10 @@ interface SearchBarProps {
 export const SearchBar = ({
   value,
   onChangeText,
-  placeholder = "Поиск товаров...",
+  placeholder,
 }: SearchBarProps) => {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("home.searchPlaceholder");
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -24,7 +27,7 @@ export const SearchBar = ({
         />
         <TextInput
           style={styles.input}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           placeholderTextColor={Colors.text}
           value={value}
           onChangeText={onChangeText}

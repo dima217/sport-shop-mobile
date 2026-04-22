@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Header } from "@/shared/layout/Header";
 import { ThemedText } from "@/shared/core/ThemedText";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -7,11 +8,12 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export const AboutScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
       <Header
-        title="О приложении"
+        title={t("about.title")}
         left={
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome name="arrow-left" size={24} color={Colors.text} />
@@ -28,22 +30,19 @@ export const AboutScreen = () => {
           <View style={styles.logoPlaceholder}>
             <FontAwesome name="shopping-bag" size={64} color={Colors.primary} />
           </View>
-          <ThemedText style={styles.appName}>Sport Equipment</ThemedText>
-          <ThemedText style={styles.appVersion}>Версия 1.0.0</ThemedText>
+          <ThemedText style={styles.appName}>{t("about.appName")}</ThemedText>
+          <ThemedText style={styles.appVersion}>{t("about.version")} 1.0.0</ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Описание</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("about.description")}</ThemedText>
           <ThemedText style={styles.sectionText}>
-            Sport Equipment - это современное мобильное приложение для покупки
-            спортивных товаров. Мы предлагаем широкий ассортимент качественной
-            спортивной одежды, обуви, инвентаря и аксессуаров от ведущих
-            производителей.
+            {t("about.descriptionText")}
           </ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Контакты</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("about.contacts")}</ThemedText>
           <View style={styles.contactItem}>
             <FontAwesome name="phone" size={18} color={Colors.primary} />
             <ThemedText style={styles.contactText}>
@@ -65,16 +64,16 @@ export const AboutScreen = () => {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Разработчик</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("about.developer")}</ThemedText>
           <ThemedText style={styles.sectionText}>
-            Разработано с ❤️ командой Sport Equipment
+            {t("about.developerText")}
           </ThemedText>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Лицензия</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("about.license")}</ThemedText>
           <ThemedText style={styles.sectionText}>
-            © 2024 Sport Equipment. Все права защищены.
+            {t("about.licenseText")}
           </ThemedText>
         </View>
       </ScrollView>

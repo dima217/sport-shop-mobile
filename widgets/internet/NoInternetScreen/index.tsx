@@ -1,20 +1,22 @@
 import { Colors, Fonts } from "@/constants/design-tokens";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useNetwork } from "@/providers/NetworkProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export function NoInternetScreen() {
   const { networkError, refresh } = useNetwork();
+  const { t } = useTranslation();
 
   const title =
     networkError === "airplane_mode"
-      ? "Airplane Mode Enabled"
-      : "No Internet Connection";
+      ? t("network.airplaneMode")
+      : t("network.noInternet");
 
   const subtitle =
     networkError === "airplane_mode"
-      ? "Disable airplane mode to reconnect"
-      : "Check your connection and try again";
+      ? t("network.disableAirplane")
+      : t("network.checkConnection");
 
   return (
     <LinearGradient colors={Colors.gradient} style={styles.container}>
@@ -27,7 +29,7 @@ export function NoInternetScreen() {
         <Text style={styles.subtitle}>{subtitle}</Text>
 
         <Pressable style={styles.button} onPress={refresh}>
-          <Text style={styles.buttonText}>Try Again</Text>
+          <Text style={styles.buttonText}>{t("network.tryAgain")}</Text>
         </Pressable>
       </View>
     </LinearGradient>
