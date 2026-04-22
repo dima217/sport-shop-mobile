@@ -46,19 +46,19 @@ export const AboutScreen = () => {
           <View style={styles.contactItem}>
             <FontAwesome name="phone" size={18} color={Colors.primary} />
             <ThemedText style={styles.contactText}>
-              +7 (495) 123-45-67
+              +375 (29) 123-45-67
             </ThemedText>
           </View>
           <View style={styles.contactItem}>
             <FontAwesome name="envelope" size={18} color={Colors.primary} />
             <ThemedText style={styles.contactText}>
-              support@sportequipment.ru
+              support@sportequipment.by
             </ThemedText>
           </View>
           <View style={styles.contactItem}>
             <FontAwesome name="globe" size={18} color={Colors.primary} />
             <ThemedText style={styles.contactText}>
-              www.sportequipment.ru
+              www.sportequipment.by
             </ThemedText>
           </View>
         </View>

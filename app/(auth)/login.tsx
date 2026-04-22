@@ -4,6 +4,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ThemedText } from "@/shared/core/ThemedText";
 import AuthPrompt from "@/shared/ui/AuthPrompt";
 import LoginForm from "@/widgets/login/LoginForm";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -28,6 +29,17 @@ const Login = () => {
           actionText={t("auth.signUpPrompt")}
           onPressAction={() => router.navigate("/(auth)/register")}
         />
+        <View style={styles.supportBlock}>
+          <ThemedText style={styles.supportTitle}>{t("auth.needHelp")}</ThemedText>
+          <View style={styles.supportRow}>
+            <FontAwesome name="phone" size={14} color={Colors.primary} />
+            <ThemedText style={styles.supportText}>{t("auth.supportPhone")}</ThemedText>
+          </View>
+          <View style={styles.supportRow}>
+            <FontAwesome name="envelope" size={14} color={Colors.primary} />
+            <ThemedText style={styles.supportText}>{t("auth.supportEmail")}</ThemedText>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -69,6 +81,24 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     zIndex: 1,
+  },
+  supportBlock: {
+    alignItems: "center",
+    gap: 6,
+    marginTop: 4,
+  },
+  supportTitle: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+  },
+  supportRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  supportText: {
+    fontSize: 13,
+    color: Colors.primary,
   },
   icon: {
     width: 68,

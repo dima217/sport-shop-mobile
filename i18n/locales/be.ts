@@ -40,6 +40,9 @@ export const be = {
     lastNameRequired: "Прозвішча абавязкова",
     unexpectedError: "Адбылася непрадбачаная памылка.",
     networkError: "Памылка сеткі. Праверце падключэнне.",
+    needHelp: "Патрэбна дапамога?",
+    supportPhone: "+375 (29) 123-45-67",
+    supportEmail: "support@sportequipment.by",
   },
 
   // Tabs
@@ -214,7 +217,7 @@ export const be = {
     developer: "Распрацоўшчык",
     developerText: "Распрацавана з ❤️ камандай Sport Equipment",
     license: "Ліцэнзія",
-    licenseText: "© 2024 Sport Equipment. Усе правы абаронены.",
+    licenseText: "© 2026 Sport Equipment. Усе правы абаронены.",
   },
 
   // Settings

@@ -40,6 +40,9 @@ export const en = {
     lastNameRequired: "Last Name is required",
     unexpectedError: "An unexpected error occurred.",
     networkError: "Network Error. Check your connection.",
+    needHelp: "Need help?",
+    supportPhone: "+375 (29) 123-45-67",
+    supportEmail: "support@sportequipment.by",
   },
 
   // Tabs
@@ -214,7 +217,7 @@ export const en = {
     developer: "Developer",
     developerText: "Developed with ❤️ by Sport Equipment team",
     license: "License",
-    licenseText: "© 2024 Sport Equipment. All rights reserved.",
+    licenseText: "© 2026 Sport Equipment. All rights reserved.",
   },
 
   // Settings

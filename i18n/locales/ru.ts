@@ -40,6 +40,9 @@ export const ru = {
     lastNameRequired: "Фамилия обязательна",
     unexpectedError: "Произошла непредвиденная ошибка.",
     networkError: "Ошибка сети. Проверьте подключение.",
+    needHelp: "Нужна помощь?",
+    supportPhone: "+375 (29) 123-45-67",
+    supportEmail: "support@sportequipment.by",
   },
 
   // Tabs
@@ -214,7 +217,7 @@ export const ru = {
     developer: "Разработчик",
     developerText: "Разработано с ❤️ командой Sport Equipment",
     license: "Лицензия",
-    licenseText: "© 2024 Sport Equipment. Все права защищены.",
+    licenseText: "© 2026 Sport Equipment. Все права защищены.",
   },
 
   // Settings
