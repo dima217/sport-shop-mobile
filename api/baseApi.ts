@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/constants/config";
 import { secureStore } from "@/services/secureStore";
 import { clearAuth, setBanned } from "@/store/slices/authSlice";
 import {
@@ -9,7 +10,7 @@ import { Alert } from "react-native";
 import { FetchArgsWithAuth } from "./types/base";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://10.39.10.195:3000",
+  baseUrl: API_BASE_URL,
   credentials: "include",
   prepareHeaders: async (headers, { getState }) => {
     const token = await secureStore.getAccessToken();

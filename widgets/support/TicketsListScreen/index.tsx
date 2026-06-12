@@ -89,7 +89,9 @@ const TicketCard = ({ ticket, onPress }: TicketCardProps) => {
       {hasResponse && (
         <View style={styles.responseIndicator}>
           <FontAwesome name="check-circle" size={14} color={Colors.primary} />
-          <ThemedText style={styles.responseText}>{t("support.hasResponse")}</ThemedText>
+          <ThemedText style={styles.responseText}>
+            {t("support.hasResponse")}
+          </ThemedText>
         </View>
       )}
     </TouchableOpacity>
@@ -179,7 +181,9 @@ export const TicketsListScreen = () => {
             style={styles.retryButton}
             onPress={() => refetch()}
           >
-            <ThemedText style={styles.retryButtonText}>{t("support.retry")}</ThemedText>
+            <ThemedText style={styles.retryButtonText}>
+              {t("support.retry")}
+            </ThemedText>
           </TouchableOpacity>
         </View>
       </View>

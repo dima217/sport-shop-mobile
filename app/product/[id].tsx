@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/design-tokens";
+import KeyboardAwareView from "@/shared/KeyboardAwareView";
 import { ProductDetails } from "@/widgets/products/ProductDetails";
 import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
@@ -8,7 +9,9 @@ const ProductScreen = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <ProductDetails productId={id} />
+      <KeyboardAwareView style={styles.keyboardAwareView}>
+        <ProductDetails productId={id} />
+      </KeyboardAwareView>
     </View>
   );
 };
@@ -18,6 +21,9 @@ export default ProductScreen;
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: Colors.background,
+    flex: 1,
+  },
+  keyboardAwareView: {
     flex: 1,
   },
 });

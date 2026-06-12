@@ -1,6 +1,7 @@
 import type { Product } from "@/api/types/products";
 import { Colors } from "@/constants/design-tokens";
 import { ThemedText } from "@/shared/core/ThemedText";
+import { ProductRating } from "@/widgets/products/ProductRating";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -72,14 +73,10 @@ export const ProductCard = ({ product, onFavoritePress }: ProductCardProps) => {
             <ThemedText style={styles.oldPrice}>{product.oldPrice} Br</ThemedText>
           )}
         </View>
-        {product.rating !== null &&
-          product.rating !== undefined &&
-          product.rating > 0 && (
-            <View style={styles.ratingContainer}>
-              <FontAwesome name="star" size={14} color="#FFD700" />
-              <ThemedText style={styles.rating}>{product.rating}</ThemedText>
-            </View>
-          )}
+        <ProductRating
+          rating={product.rating}
+          reviewCount={product.reviewCount}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -169,14 +166,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.textSecondary,
     textDecorationLine: "line-through",
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  rating: {
-    fontSize: 12,
-    color: Colors.textSecondary,
   },
 });

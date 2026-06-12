@@ -4,12 +4,11 @@ import {
   SupportTicketStatusUpdatedPayload,
   WebSocketEvent,
 } from "@/api/types/websocket";
+import { API_BASE_URL } from "@/constants/config";
 import { AppDispatch } from "@/store/store";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useWebSocket } from "../websocket/useWebSocket";
-
-const WS_URL = "http://10.39.10.195:3000";
 
 export const useSupportUpdates = (
   accessToken: string,
@@ -17,7 +16,7 @@ export const useSupportUpdates = (
   isEnabled: boolean = true
 ) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isConnected, on, off } = useWebSocket(WS_URL, accessToken);
+  const { isConnected, on, off } = useWebSocket(API_BASE_URL, accessToken);
 
   useEffect(() => {
     if (!isConnected || !isEnabled) {

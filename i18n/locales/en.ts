@@ -193,9 +193,9 @@ export const en = {
     postalCode: "Postal Code",
     country: "Country",
     streetPlaceholder: "123 Main St, Apt 4",
-    cityPlaceholder: "Moscow",
+    cityPlaceholder: "Minsk",
     postalCodePlaceholder: "123456",
-    countryPlaceholder: "Russia",
+    countryPlaceholder: "Belarus",
     errorLoading: "Failed to load addresses",
     errorSaving: "Failed to save address",
     errorDeleting: "Failed to delete address",
@@ -240,9 +240,9 @@ export const en = {
     submit: "Place Order",
     placeholders: {
       street: "123 Main St, Apt 4",
-      city: "Moscow",
+      city: "Minsk",
       postalCode: "123456",
-      country: "Russia",
+      country: "Belarus",
       comment: "Additional notes for your order",
     },
     errors: {

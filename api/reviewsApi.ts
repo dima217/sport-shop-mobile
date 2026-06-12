@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "./baseApi";
+import { productsApi } from "./productsApi";
 import {
   CreateReviewDto,
   Review,
@@ -7,6 +8,18 @@ import {
   ReviewsResponse,
   UpdateReviewDto,
 } from "./types/reviews";
+
+function invalidateProductAfterReviewChange(
+  dispatch: (action: unknown) => void,
+  productId: string,
+) {
+  dispatch(
+    productsApi.util.invalidateTags([
+      { type: "Product", id: productId },
+      "Product",
+    ]),
+  );
+}
 
 export const reviewsApi = createApi({
   reducerPath: "reviewsApi",
@@ -68,6 +81,14 @@ export const reviewsApi = createApi({
         { type: "Review", id: `LIST-${productId}` },
         { type: "Review", id: `MY-${productId}` },
       ],
+      async onQueryStarted({ productId }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateProductAfterReviewChange(dispatch, productId);
+        } catch {
+          // skip product invalidation on failed mutation
+        }
+      },
     }),
 
     updateReview: build.mutation<
@@ -84,6 +105,14 @@ export const reviewsApi = createApi({
         { type: "Review", id: `LIST-${productId}` },
         { type: "Review", id: `MY-${productId}` },
       ],
+      async onQueryStarted({ productId }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateProductAfterReviewChange(dispatch, productId);
+        } catch {
+          // skip product invalidation on failed mutation
+        }
+      },
     }),
 
     deleteReview: build.mutation<void, { productId: string; reviewId: string }>(
@@ -97,6 +126,14 @@ export const reviewsApi = createApi({
           { type: "Review", id: `LIST-${productId}` },
           { type: "Review", id: `MY-${productId}` },
         ],
+        async onQueryStarted({ productId }, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled;
+            invalidateProductAfterReviewChange(dispatch, productId);
+          } catch {
+            // skip product invalidation on failed mutation
+          }
+        },
       }
     ),
 

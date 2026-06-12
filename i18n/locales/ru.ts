@@ -193,9 +193,9 @@ export const ru = {
     postalCode: "Почтовый индекс",
     country: "Страна",
     streetPlaceholder: "ул. Ленина, д. 10, кв. 25",
-    cityPlaceholder: "Москва",
+    cityPlaceholder: "Минск",
     postalCodePlaceholder: "123456",
-    countryPlaceholder: "Россия",
+    countryPlaceholder: "Беларусь",
     errorLoading: "Не удалось загрузить адреса",
     errorSaving: "Не удалось сохранить адрес",
     errorDeleting: "Не удалось удалить адрес",
@@ -240,9 +240,9 @@ export const ru = {
     submit: "Оформить заказ",
     placeholders: {
       street: "ул. Ленина, д. 10, кв. 25",
-      city: "Москва",
+      city: "Минск",
       postalCode: "123456",
-      country: "Россия",
+      country: "Беларусь",
       comment: "Дополнительные пожелания к заказу",
     },
     errors: {
